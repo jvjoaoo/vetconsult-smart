@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VetConsult Smart - Administração de Usuários</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="icon" type="image/x-icon" href="../assets/icon-logo.svg" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-container">
+        <a href="./admin-usuarios.html" class="logo-text">
+          <img
+            src="../assets/vetconsultsmart_logo.svg"
+            alt="VetConsult Smart"
+            class="logo"
+          />
+        </a>
+
+        <nav class="menu">
+          <a href="./admin-usuarios.html">Usuários</a>
+          <a href="./cadastro-usuario.html">Cadastrar Usuário</a>
+          <a href="#">Agendamentos</a>
+        </nav>
+      </div>
+    </header>
+    <main class="admin-height">
+      <div class="container">
+        <div class="header-actions">
+          <div>
+            <h1>Painel Administrativo - Usuários</h1>
+            <p>Gerencie os usuários cadastrados no sistema.</p>
+          </div>
+
+          <a href="./cadastro-usuario.html" class="btn-link">Novo Usuário</a>
+        </div>
+
+        <section class="list-section">
+          <h2>Usuários Cadastrados</h2>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Email</th>
+                  <th>Contato</th>
+                  <th>Data Nasc.</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="usuariosTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script src="../js/admin-usuarios.js"></script>
+
+    <footer class="footer">
+      <div class="footer-container">
+        <!-- Logo -->
+        <div class="footer-logo">
+          <img
+            src="../assets/vetconsultsmart_logo.svg"
+            alt="VetConsult Smart"
+            class="logo"
+          />
+        </div>
+
+        <!-- Redes sociais -->
+        <div class="footer-social">
+          <a href="#" class="social-icon"></a>
+          <a href="#" class="social-icon"></a>
+          <a href="#" class="social-icon"></a>
+        </div>
+
+        <!-- Links -->
+        <div class="footer-links">
+          <a href="#">FAQ</a>
+          <a href="#">CONTATO</a>
+          <a href="#">LOREM</a>
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-copy">© 2026 Vetconsult Smart. Todos os direitos reservados.</div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,89 @@
+/* =========================
+   RESET CSS
+   VetConsult Smart
+   ========================= */
+
+/* Remove margens e paddings padrão */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Melhor renderização de fontes */
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Altura base da página */
+
+html,
+body {
+  height: 100%;
+}
+
+/* Imagens responsivas */
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Remove estilos padrão de listas */
+
+ul,
+ol {
+  list-style: none;
+}
+
+/* Remove estilos padrão de links */
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Herdar fonte para inputs */
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Remove bordas padrão de botão */
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* Evita overflow de texto */
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+/* Tabelas mais previsíveis */
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}

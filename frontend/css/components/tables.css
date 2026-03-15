@@ -1,0 +1,25 @@
+/* ===== ESTILO DA TABELA ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+th,
+td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  background-color: #f9fafb;
+}
+
+.table_actions {
+  display: flex;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+

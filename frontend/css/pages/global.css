@@ -1,0 +1,14 @@
+.visualizar-height,
+.admin-height {
+  height: 70vh;
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 70px auto;
+  background: var(--color-brand-light);
+  padding: 24px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}

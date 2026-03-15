@@ -1,0 +1,52 @@
+/* =========================
+   HEADER / MENU - VetConsult Smart
+   ========================= */
+
+.topbar {
+  width: 100%;
+  background-color: var(--color-header-bg);
+  border-bottom: 1px solid var(--color-surface-soft);
+}
+
+.topbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 32px;
+}
+
+/* LOGO */
+
+.logo {
+  height: 70px;
+  object-fit: contain;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+}
+
+/* MENU */
+
+.menu {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.menu a {
+  text-decoration: none;
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.menu a:hover {
+  color: var(--color-brand-primary);
+}

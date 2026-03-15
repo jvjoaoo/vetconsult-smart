@@ -1,0 +1,24 @@
+/* BASE */
+@import "./base/reset.css";
+@import "./base/variables.css";
+@import "./base/typography.css";
+
+
+/* COMPONENTS */
+@import "./components/header.css";
+@import "./components/buttons.css";
+@import "./components/forms.css";
+@import "./components/tables.css";
+@import "./components/footer.css";
+
+/* PAGES */
+@import "./pages/global.css";
+
+/*
+@import "./pages/admin-usuarios.css";
+@import "./pages/cadastro-usuario.css"; ==> criar posteriormente
+@import "./pages/editar-usuario.css"; ==> criar posteriormente
+@import "./pages/visualizar-usuario.css"; ==> criar posteriormente
+*/
+
+@import "./base/responsive.css";

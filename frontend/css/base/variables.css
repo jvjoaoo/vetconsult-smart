@@ -1,0 +1,57 @@
+/* =========================
+   CSS VARIABLES
+   VetConsult Smart
+   ========================= */
+
+:root {
+
+  /* CORES DA MARCA */
+
+  --color-brand-dark: #0B1D18;
+  --color-brand-light: #ffffff;
+  --color-brand-primary: #14D09B;
+  --color-brand-secondary: #00FFB7;
+
+  /* NEUTRAL COLORS */
+
+  --color-surface-soft: #EFF9F6;
+  --color-white: #FFFFFF;
+
+  /* TEXT COLORS */
+
+  --color-text-primary: #0B1D18;
+  --color-text-light: #FFFFFF;
+  --color-text-muted: #5f6f69;
+
+  /* UI COLORS */
+
+  --color-border: #d7e6e1;
+  --color-header-bg: #F0FDF9;
+  --color-footer-bg: #F0FDF9;
+  --color-card-bg: #FFFFFF;
+
+  /* BUTTONS */
+
+  --color-button-primary: #14D09B;
+  --color-button-primary-hover: #00FFB7;
+  --bg-button-color-light: #ffffff;
+  --color-button-text: #0B1D18;
+
+  /* SHADOW */
+
+  --shadow-sm: 0 2px 8px rgba(11, 29, 24, 0.08);
+
+  /* BORDER RADIUS */
+
+  --radius-sm: /**/;
+  --radius-md: /**/;
+  --radius-lg: /**/;
+
+  /* SPACING */
+
+  --spacing-xs: /**/;
+  --spacing-sm: /**/;
+  --spacing-md: /**/;
+  --spacing-lg: /**/;
+  --spacing-xl: /**/;
+}

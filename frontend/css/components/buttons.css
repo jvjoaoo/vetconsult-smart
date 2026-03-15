@@ -1,0 +1,24 @@
+.btn-link {
+  display: inline-block;
+  text-decoration: none;
+  background-color: var(--color-button-primary);
+  border: 1px solid var(--color-button-primary);
+  color: var(--color-text-light);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.btn-link:hover {
+  background-color: var(--bg-button-color-light);
+  color: var(--color-button-text);
+  border: 1px solid #14d09b;
+}
+
+.btn-link.secondary {
+  background-color: var(--color-button-primary);
+}
+
+.btn-link.secondary:hover {
+  background-color: var(--bg-button-color-light);
+}

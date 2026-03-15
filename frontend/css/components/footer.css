@@ -1,0 +1,85 @@
+.footer {
+  background-color: var(--color-footer-bg);
+  padding: 40px 20px;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+}
+
+.footer-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Logo */
+
+.footer-logo {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.logo-main {
+  font-weight: 600;
+  font-size: 18px;
+  display: block;
+}
+
+.logo-sub {
+  font-size: 14px;
+  letter-spacing: 3px;
+  font-weight: 700;
+}
+
+/* Redes sociais */
+
+.footer-social {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 25px 0;
+}
+
+.social-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background: #dde3e1;/*REVISAR*/
+  border: 1px solid #aab4b1;/*REVISAR*/
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+
+.social-icon:hover {
+  background: #bfc9c6; /*REVISAR*/
+  transform: translateY(-3px);
+}
+
+/* Links */
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.footer-links a {
+  text-decoration: none;
+  color: var(--color-text-primary);
+  font-weight: 500;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: var(--color-brand-primary);
+}
+
+/* Copyright */
+
+.footer-copy {
+  font-size: 13px;
+  color: var(--color-text-primary);
+}

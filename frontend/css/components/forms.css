@@ -1,0 +1,43 @@
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.form-section,
+.list-section {
+  margin-top: 24px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+input {
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+}
+
+button {
+  padding: 10px 14px;
+  border: none;
+  background-color: #14d09b;
+  color: white;
+  border-radius: 6px;
+  border: 1px solid #14d09b;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+button:hover {
+  background-color: #ffffff;
+  border: 1px solid #14d09b;
+  color: #0b1d18;
+}
+
+
+
