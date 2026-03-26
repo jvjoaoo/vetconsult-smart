@@ -21,18 +21,30 @@ export async function buscarUsuarioPorId(id: number) {
 // 2. separa os campos
 // 3. executa um INSERT no banco
 // 4. retorna o resultado da inserção
+import bcrypt from "bcrypt";
+
 export async function criarUsuario(usuario: any) {
   const { USR_NAME, USR_EMAIL, USR_TELEFONE, USR_DTNASC, USR_SENHA } = usuario;
 
+  const saltRounds = 12;
+  const senhaHash = await bcrypt.hash(USR_SENHA, saltRounds);
+
   const [result] = await database.query(
-    `INSERT INTO usuarios_admin 
+    `INSERT INTO usuarios_admin
     (USR_NAME, USR_EMAIL, USR_TELEFONE, USR_DTNASC, USR_SENHA)
     VALUES (?, ?, ?, ?, ?)`,
-    [USR_NAME, USR_EMAIL, USR_TELEFONE, USR_DTNASC, USR_SENHA]
+    [USR_NAME, USR_EMAIL, USR_TELEFONE, USR_DTNASC, senhaHash]
   );
 
   return result;
 }
+
+async function testeHash() {
+  const hash = await bcrypt.hash("SuaSenhaForte123!", 12);
+  console.log(hash);
+}
+
+testeHash();
 
 //   Lógica dessa função: atualizarUsuario()
 // 1. recebe o id do usuário

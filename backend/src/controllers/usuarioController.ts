@@ -8,6 +8,8 @@ import { Request, Response } from "express";
 // Importando as funções do banco
 // Controller → chama Service 
 // Service    → fala com banco
+import { hashPassword, validatePasswordStrength } from "../utils/password";
+
 import {
   listarUsuarios,
   buscarUsuarioPorId,
