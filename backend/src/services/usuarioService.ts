@@ -1,4 +1,5 @@
 import { database } from "../config/database";
+import bcrypt from "bcrypt";
 
 export async function listarUsuarios() {
   const [rows] = await database.query(
@@ -16,12 +17,12 @@ export async function buscarUsuarioPorId(id: number) {
   return rows[0];
 }
 
-//   Lógica dessa função: criarUsuario()
+// Lógica dessa função: criarUsuario()
 // 1. recebe os dados do usuário
 // 2. separa os campos
-// 3. executa um INSERT no banco
-// 4. retorna o resultado da inserção
-import bcrypt from "bcrypt";
+// 3. criptografa a senha
+// 4. executa um INSERT no banco
+// 5. retorna o resultado da inserção
 
 export async function criarUsuario(usuario: any) {
   const { USR_NAME, USR_EMAIL, USR_TELEFONE, USR_DTNASC, USR_SENHA } = usuario;
@@ -31,29 +32,38 @@ export async function criarUsuario(usuario: any) {
 
   const [result] = await database.query(
     `INSERT INTO usuarios_admin
-    (USR_NAME, USR_EMAIL, USR_TELEFONE, USR_DTNASC, USR_SENHA)
-    VALUES (?, ?, ?, ?, ?)`,
+     (USR_NAME, USR_EMAIL, USR_TELEFONE, USR_DTNASC, USR_SENHA)
+     VALUES (?, ?, ?, ?, ?)`,
     [USR_NAME, USR_EMAIL, USR_TELEFONE, USR_DTNASC, senhaHash]
   );
 
   return result;
 }
 
-async function testeHash() {
-  const hash = await bcrypt.hash("SuaSenhaForte123!", 12);
-  console.log(hash);
-}
-
-testeHash();
-
-//   Lógica dessa função: atualizarUsuario()
+// Lógica dessa função: atualizarUsuario()
 // 1. recebe o id do usuário
 // 2. recebe os novos dados
-// 3. executa um UPDATE na tabela
-// 4. retorna o resultado da atualização
+// 3. verifica se uma nova senha foi enviada
+// 4. se houver senha, criptografa e atualiza tudo
+// 5. se não houver senha, mantém a senha atual
+// 6. retorna o resultado da atualização
 
 export async function atualizarUsuario(id: number, usuario: any) {
-  const { USR_NAME, USR_EMAIL, USR_TELEFONE, USR_DTNASC } = usuario;
+  const { USR_NAME, USR_EMAIL, USR_TELEFONE, USR_DTNASC, USR_SENHA } = usuario;
+
+  if (USR_SENHA && USR_SENHA.trim() !== "") {
+    const saltRounds = 12;
+    const senhaHash = await bcrypt.hash(USR_SENHA, saltRounds);
+
+    const [result] = await database.query(
+      `UPDATE usuarios_admin
+       SET USR_NAME = ?, USR_EMAIL = ?, USR_TELEFONE = ?, USR_DTNASC = ?, USR_SENHA = ?
+       WHERE USR_ID = ?`,
+      [USR_NAME, USR_EMAIL, USR_TELEFONE, USR_DTNASC, senhaHash, id]
+    );
+
+    return result;
+  }
 
   const [result] = await database.query(
     `UPDATE usuarios_admin
@@ -65,7 +75,7 @@ export async function atualizarUsuario(id: number, usuario: any) {
   return result;
 }
 
-//  Lógica dessa função: deletarUsuario()
+// Lógica dessa função: deletarUsuario()
 // 1. recebe o id do usuário
 // 2. executa DELETE no banco
 // 3. retorna o resultado da exclusão

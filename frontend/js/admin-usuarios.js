@@ -1,5 +1,10 @@
 const apiUrl = "http://localhost:3000/usuarios_admin";
 const usuariosTableBody = document.getElementById("usuariosTableBody");
+const token = localStorage.getItem("token");
+
+if (!token) {
+  window.location.href = "./login-admin.html";
+}
 
 function formatarData(data) {
   if (!data) return "";
@@ -26,7 +31,27 @@ function formatarTelefone(telefone) {
 
 async function listarUsuarios() {
   try {
-    const response = await fetch(apiUrl);
+    const response = await fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (response.status === 401 || response.status === 403) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("usuarioLogado");
+      localStorage.removeItem("tipoUsuario");
+      alert("Sua sessão expirou ou você não tem permissão para acessar esta página.");
+      window.location.href = "./login-admin.html";
+      return;
+    }
+
+    if (!response.ok) {
+      throw new Error("Erro ao buscar usuários.");
+    }
+
     const usuarios = await response.json();
 
     usuariosTableBody.innerHTML = "";
@@ -67,7 +92,19 @@ async function deletarUsuario(id) {
   try {
     const response = await fetch(`${apiUrl}/${id}`, {
       method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
     });
+
+    if (response.status === 401 || response.status === 403) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("usuarioLogado");
+      localStorage.removeItem("tipoUsuario");
+      alert("Sua sessão expirou ou você não tem permissão para realizar esta ação.");
+      window.location.href = "./login-admin.html";
+      return;
+    }
 
     if (!response.ok) {
       throw new Error("Erro ao excluir usuário");
@@ -81,3 +118,29 @@ async function deletarUsuario(id) {
 }
 
 listarUsuarios();
+
+/* BTN SAIR */
+const btnLogout = document.getElementById("btn-logout");
+
+if (btnLogout) {
+  btnLogout.addEventListener("click", () => {
+    
+    if (confirm("Deseja realmente sair?")) {
+      // Remove dados do usuário
+      localStorage.removeItem("token");
+      localStorage.removeItem("usuario"); // se existir
+
+      // Redireciona para login
+      window.location.href = "../pages/login-admin.html";
+    }
+
+  });
+}
+
+
+
+token = localStorage.getItem("token");
+
+if (!token) {
+  window.location.href = "../pages/login-admin.html";
+}

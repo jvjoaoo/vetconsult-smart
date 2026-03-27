@@ -1,20 +1,35 @@
-const apiUrl = "http://localhost:3000/usuarios_admin";
+const apiUrl = "http://localhost:3000";
 
-const form = document.getElementById("editarUsuarioForm");
-const campoNome = document.getElementById("USR_NAME");
-const campoEmail = document.getElementById("USR_EMAIL");
-const campoTelefone = document.getElementById("USR_TELEFONE");
-const campoDataNascimento = document.getElementById("USR_DTNASC");
-const campoSenha = document.getElementById("USR_SENHA");
+function obterToken() {
+  return localStorage.getItem("token");
+}
 
+function redirecionarParaLogin() {
+  localStorage.removeItem("token");
+  window.location.href = "./login-admin.html";
+}
 
-function obterIdDaUrl() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("id");
+function obterElementosFormulario() {
+  return {
+    form: document.getElementById("editarUsuarioForm"),
+    nome: document.getElementById("USR_NAME"),
+    email: document.getElementById("USR_EMAIL"),
+    telefone: document.getElementById("USR_TELEFONE"),
+    dataNascimento: document.getElementById("USR_DTNASC"),
+    senha: document.getElementById("USR_SENHA"),
+  };
 }
 
 async function carregarUsuario() {
-  const id = obterIdDaUrl();
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  const token = obterToken();
+
+  if (!token) {
+    alert("Você precisa estar logado.");
+    redirecionarParaLogin();
+    return;
+  }
 
   if (!id) {
     alert("ID do usuário não informado.");
@@ -22,79 +37,138 @@ async function carregarUsuario() {
     return;
   }
 
-  try {
-    const response = await fetch(`${apiUrl}/${id}`);
+  const { nome, email, telefone, dataNascimento, senha } =
+    obterElementosFormulario();
 
-    if (!response.ok) {
-      throw new Error("Usuário não encontrado");
-    }
-
-    const usuario = await response.json();
-
-    campoNome.value = usuario.USR_NAME || "";
-    campoEmail.value = usuario.USR_EMAIL || "";
-    campoTelefone.value = usuario.USR_TELEFONE || "";
-    campoDataNascimento.value = usuario.USR_DTNASC
-      ? usuario.USR_DTNASC.split("T")[0]
-      : "";
-    campoSenha.value = usuario.USR_SENHA || "";
-  } catch (error) {
-    console.error("Erro ao carregar usuário:", error);
-    alert("Não foi possível carregar os dados do usuário.");
-    window.location.href = "./admin-usuarios.html";
+  if (!nome || !email || !telefone || !dataNascimento || !senha) {
+    console.error(
+      "Um ou mais campos do formulário não foram encontrados no HTML.",
+    );
+    return;
   }
-}
-
-function aplicarMascaraTelefone(valor) {
-  const numeros = valor.replace(/\D/g, "").slice(0, 11);
-
-  if (numeros.length <= 2) {
-    return numeros;
-  }
-
-  if (numeros.length <= 7) {
-    return `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
-  }
-
-  return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7)}`;
-}
-
-campoTelefone.addEventListener("input", (event) => {
-  event.target.value = aplicarMascaraTelefone(event.target.value);
-});
-
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  const id = obterIdDaUrl();
-
-  const usuario = {
-    USR_NAME: campoNome.value,
-    USR_EMAIL: campoEmail.value,
-    USR_TELEFONE: campoTelefone.value,
-    USR_DTNASC: campoDataNascimento.value,
-    USR_SENHA: campoSenha.value
-  };
 
   try {
-    const response = await fetch(`${apiUrl}/${id}`, {
-      method: "PUT",
+    const resposta = await fetch(`${apiUrl}/usuarios_admin/${id}`, {
+      method: "GET",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(usuario)
     });
 
-    if (!response.ok) {
-      throw new Error("Erro ao atualizar usuário");
+    if (resposta.status === 401 || resposta.status === 403) {
+      alert("Sessão expirada. Faça login novamente.");
+      redirecionarParaLogin();
+      return;
     }
 
-    alert("Usuário atualizado com sucesso!");
+    if (!resposta.ok) {
+      const erroResposta = await resposta.json().catch(() => null);
+      const mensagem =
+        erroResposta?.mensagem ||
+        `Erro ao carregar usuário: ${resposta.status}`;
+      throw new Error(mensagem);
+    }
+
+    const usuario = await resposta.json();
+
+    nome.value = usuario.USR_NAME || usuario.nome || "";
+    email.value = usuario.USR_EMAIL || usuario.email || "";
+    telefone.value = usuario.USR_TELEFONE || usuario.telefone || "";
+    dataNascimento.value = usuario.USR_DTNASC || usuario.data_nascimento || "";
+    senha.value = "";
+  } catch (error) {
+    console.error("Erro ao carregar usuário:", error);
+    alert(error.message || "Erro ao carregar usuário.");
+  }
+}
+
+async function atualizarUsuario(event) {
+  event.preventDefault();
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  const token = obterToken();
+
+  if (!token) {
+    alert("Você precisa estar logado.");
+    redirecionarParaLogin();
+    return;
+  }
+
+  if (!id) {
+    alert("ID do usuário não informado.");
+    window.location.href = "./admin-usuarios.html";
+    return;
+  }
+
+  const { nome, email, telefone, dataNascimento, senha } =
+    obterElementosFormulario();
+
+  if (!nome || !email || !telefone || !dataNascimento || !senha) {
+    alert("Campos do formulário não encontrados.");
+    return;
+  }
+
+  const dadosAtualizados = {
+    USR_NAME: nome.value.trim(),
+    USR_EMAIL: email.value.trim(),
+    USR_TELEFONE: telefone.value.trim(),
+    USR_DTNASC: dataNascimento.value,
+    USR_SENHA: senha.value.trim(),
+  };
+
+  if (
+    !dadosAtualizados.USR_NAME ||
+    !dadosAtualizados.USR_EMAIL ||
+    !dadosAtualizados.USR_TELEFONE ||
+    !dadosAtualizados.USR_DTNASC ||
+    !dadosAtualizados.USR_SENHA
+  ) {
+    alert("Preencha todos os campos.");
+    return;
+  }
+
+  try {
+    const resposta = await fetch(`${apiUrl}/usuarios_admin/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(dadosAtualizados),
+    });
+
+    if (resposta.status === 401 || resposta.status === 403) {
+      alert("Sessão expirada. Faça login novamente.");
+      redirecionarParaLogin();
+      return;
+    }
+
+    if (!resposta.ok) {
+      const erroResposta = await resposta.json().catch(() => null);
+      const mensagem =
+        erroResposta?.mensagem ||
+        `Erro ao atualizar usuário: ${resposta.status}`;
+      throw new Error(mensagem);
+    }
+
+    alert("Usuário atualizado com sucesso.");
     window.location.href = "./admin-usuarios.html";
   } catch (error) {
     console.error("Erro ao atualizar usuário:", error);
-    alert("Não foi possível atualizar o usuário.");
+    alert(error.message || "Erro ao atualizar usuário.");
   }
-});
+}
 
-carregarUsuario();
+document.addEventListener("DOMContentLoaded", () => {
+  const { form } = obterElementosFormulario();
+
+  if (!form) {
+    console.error('Formulário "editarUsuarioForm" não encontrado.');
+    return;
+  }
+
+  form.addEventListener("submit", atualizarUsuario);
+  carregarUsuario();
+});

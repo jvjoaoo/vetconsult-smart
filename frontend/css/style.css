@@ -13,6 +13,7 @@
 
 /* PAGES */
 @import "./pages/global.css";
+@import "./pages/login-admin.css";
 
 /*
 @import "./pages/admin-usuarios.css";

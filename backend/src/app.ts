@@ -1,42 +1,31 @@
-// No terminal rodar os seguintes comandos para iniciar o servidor:
-//cd backend
-//npm run dev
-
-
-// Criação das Rotas 
-import express from "express"; // Importação do framework express
+import express from "express";
 import cors from "cors";
-import { database } from "./config/database"; //Importando a conexão com o banco
-import usuarioRoutes from "./routes/usuarioRoutes";
+import dotenv from "dotenv";
 
+// ==== FUNCIONALIDADE usuarioRoutes.ts ====
+// Mapear URLs → para funções do controller
+// Definir como a API responde a cada requisição HTTP
+
+// importação das rotas.
+import usuarioRoutes from "./routes/usuarioRoutes";
+import authRoutes from "./routes/authRoutes";
+
+dotenv.config();
 
 const app = express();
 
-app.use(cors({
-  origin: "http://127.0.0.1:5500"
-}));
-
+app.use(cors());
 app.use(express.json());
 
+// ==== ROTAS DE AUTENTICAÇÃO ====
+// Responsável pelo login do administrador
+app.use(authRoutes);
+
+// ==== ROTAS DE USUÁRIOS ADMIN ====
+// Protegidas por autenticação (middleware verificarTokenAdmin)
 app.use(usuarioRoutes);
 
-
-
-app.get("/", async (req, res) => {
-  try {
-    const [rows] = await database.query("SELECT 1");
-    res.json({
-      message: "Conexão com banco funcionando!",
-      database: rows
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Erro ao conectar com banco",
-      error
-    });
-  }
-});
-
 export default app;
+
 
 

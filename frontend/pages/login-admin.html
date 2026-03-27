@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Administrador | VetConsult Smart</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="icon" type="image/x-icon" href="../assets/icon-logo.svg" />
+  </head>
+  <body>
+    <main class="login-page">
+      <section class="login-container">
+        <div class="login-header">
+          <h1>VetConsult Smart</h1>
+          <p>Acesso administrativo</p>
+        </div>
+
+        <form id="loginForm" class="login-form">
+          <div class="form-group">
+            <label for="email">E-mail</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Digite seu e-mail"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="senha">Senha</label>
+            <input
+              type="password"
+              id="senha"
+              name="senha"
+              placeholder="Digite sua senha"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn-login">Entrar</button>
+
+          <p id="mensagem"></p>
+        </form>
+      </section>
+    </main>
+
+    <script src="../js/pages/login-admin.js"></script>
+  </body>
+</html>

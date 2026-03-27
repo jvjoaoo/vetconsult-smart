@@ -1,13 +1,20 @@
 const apiUrl = "http://localhost:3000/usuarios_admin";
 
 const usuarioForm = document.getElementById("usuarioForm");
-
 const campoNome = document.getElementById("USR_NAME");
 const campoEmail = document.getElementById("USR_EMAIL");
-const campoContato = document.getElementById("USR_TELEFONE");
+const campoTelefone = document.getElementById("USR_TELEFONE");
 const campoDataNascimento = document.getElementById("USR_DTNASC");
 const campoSenha = document.getElementById("USR_SENHA");
-const campoTelefone = document.getElementById("USR_TELEFONE");
+
+function obterToken() {
+  return localStorage.getItem("token");
+}
+
+function redirecionarParaLogin() {
+  localStorage.removeItem("token");
+  window.location.href = "./login-admin.html";
+}
 
 function aplicarMascaraTelefone(valor) {
   const numeros = valor.replace(/\D/g, "").slice(0, 11);
@@ -23,40 +30,72 @@ function aplicarMascaraTelefone(valor) {
   return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7)}`;
 }
 
-campoTelefone.addEventListener("input", (event) => {
-  event.target.value = aplicarMascaraTelefone(event.target.value);
-});
+if (!usuarioForm || !campoNome || !campoEmail || !campoTelefone || !campoDataNascimento || !campoSenha) {
+  console.error("Um ou mais elementos do formulário não foram encontrados no HTML.");
+} else {
+  campoTelefone.addEventListener("input", (event) => {
+    event.target.value = aplicarMascaraTelefone(event.target.value);
+  });
 
-usuarioForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
+  usuarioForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-  const usuario = {
-    USR_NAME: campoNome.value,
-    USR_EMAIL: campoEmail.value,
-    USR_TELEFONE: campoContato.value,
-    USR_DTNASC: campoDataNascimento.value,
-    USR_SENHA: campoSenha.value
-  };
+    const token = obterToken();
 
-  try {
-    const response = await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(usuario)
-    });
-
-    if (!response.ok) {
-      throw new Error("Erro ao cadastrar usuário");
+    if (!token) {
+      alert("Você precisa estar logado para cadastrar um usuário.");
+      redirecionarParaLogin();
+      return;
     }
 
-    alert("Usuário cadastrado com sucesso!");
-    usuarioForm.reset();
+    const usuario = {
+      USR_NAME: campoNome.value.trim(),
+      USR_EMAIL: campoEmail.value.trim(),
+      USR_TELEFONE: campoTelefone.value.trim(),
+      USR_DTNASC: campoDataNascimento.value,
+      USR_SENHA: campoSenha.value.trim(),
+    };
 
-    window.location.href = "./admin-usuarios.html";
-  } catch (error) {
-    console.error("Erro ao cadastrar usuário:", error);
-    alert("Não foi possível cadastrar o usuário.");
-  }
-});
+    if (
+      !usuario.USR_NAME ||
+      !usuario.USR_EMAIL ||
+      !usuario.USR_TELEFONE ||
+      !usuario.USR_DTNASC ||
+      !usuario.USR_SENHA
+    ) {
+      alert("Preencha todos os campos.");
+      return;
+    }
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(usuario),
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        alert("Sessão expirada. Faça login novamente.");
+        redirecionarParaLogin();
+        return;
+      }
+
+      const respostaJson = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        const mensagem = respostaJson?.mensagem || `Erro ao cadastrar usuário: ${response.status}`;
+        throw new Error(mensagem);
+      }
+
+      alert("Usuário cadastrado com sucesso!");
+      usuarioForm.reset();
+      window.location.href = "./admin-usuarios.html";
+    } catch (error) {
+      console.error("Erro ao cadastrar usuário:", error);
+      alert(error.message || "Não foi possível cadastrar o usuário.");
+    }
+  });
+}
