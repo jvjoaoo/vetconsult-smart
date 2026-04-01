@@ -9,6 +9,9 @@ import dotenv from "dotenv";
 // importação das rotas.
 import usuarioRoutes from "./routes/usuarioRoutes";
 import authRoutes from "./routes/authRoutes";
+import tutorRoutes from "./routes/tutorRoutes";
+import authTutorRoutes from "./routes/authTutorRoutes";
+
 
 dotenv.config();
 
@@ -24,6 +27,11 @@ app.use(authRoutes);
 // ==== ROTAS DE USUÁRIOS ADMIN ====
 // Protegidas por autenticação (middleware verificarTokenAdmin)
 app.use(usuarioRoutes);
+
+
+// ==== ROTAS DE USUÁRIOS TUTORES ====
+app.use(tutorRoutes);
+app.use(authTutorRoutes);
 
 export default app;
 
