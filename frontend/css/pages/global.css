@@ -15,7 +15,6 @@
 
 /* ==== LOGIN TUTORES ==== */
 
-
 .auth-page {
   margin: 0;
   min-height: 100vh;
@@ -57,32 +56,42 @@
 }
 
 .auth-logo {
-  width: 180px;
-  margin-bottom: 24px;
+  width: 260px;
+  max-width: 100%;
+  margin-bottom: 70px;
 }
 
 .auth-panel-left h2 {
-  margin-bottom: 12px;
+  margin: 0 0 12px;
+  font-size: 2rem;
 }
 
 .auth-panel-left p {
   line-height: 1.6;
-  margin-bottom: 20px;
+  margin: 0 0 28px;
+  font-size: 1.05rem;
 }
 
-.auth-outline-button {
-  padding: 12px 20px;
-  border: 1px solid #fff;
-  background: transparent;
-  color: #fff;
-  border-radius: 999px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.auth-outline-button:hover {
-  background: #fff;
+.side-panel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 290px;
+  padding: 14px 20px;
+  background: #ffffff;
   color: #0b1d18;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.side-panel-btn:hover {
+  background: #14d09b;
+  color: #ffffff;
 }
 
 .auth-panel-right {
@@ -100,6 +109,11 @@
   width: 200%;
   display: flex;
   transition: transform 0.4s ease;
+  will-change: transform;
+}
+
+.auth-box.login-mode .form-track {
+  transform: translateX(0);
 }
 
 .auth-box.register-mode .form-track {
@@ -110,15 +124,18 @@
   width: 50%;
   padding: 48px;
   box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .form-screen h1 {
   margin: 0 0 10px;
+  font-size: 2rem;
 }
 
 .auth-subtitle {
   margin-bottom: 24px;
   color: #555;
+  line-height: 1.5;
 }
 
 .auth-form {
@@ -128,11 +145,14 @@
 }
 
 .auth-form input {
+  width: 100%;
   padding: 14px 16px;
   border: 1px solid #d8dede;
   border-radius: 10px;
   font-size: 15px;
   outline: none;
+  box-sizing: border-box;
+  background: #fff;
 }
 
 .auth-form input:focus {
@@ -146,11 +166,17 @@
   background: #14d09b;
   color: #fff;
   font-weight: 700;
+  font-size: 1rem;
   cursor: pointer;
+  transition: opacity 0.3s ease, transform 0.2s ease;
 }
 
 .auth-primary-button:hover {
   opacity: 0.92;
+}
+
+.auth-primary-button:active {
+  transform: scale(0.98);
 }
 
 .auth-switch-text {
@@ -164,6 +190,11 @@
   color: #14d09b;
   font-weight: 700;
   cursor: pointer;
+  font-size: 14px;
+}
+
+.auth-switch-text button:hover {
+  text-decoration: underline;
 }
 
 .auth-message {
@@ -173,12 +204,80 @@
   font-weight: 500;
 }
 
+/* ===== RESPONSIVO ===== */
+
+@media (max-width: 992px) {
+  .auth-box {
+    grid-template-columns: 320px 1fr;
+  }
+
+  .auth-logo {
+    width: 220px;
+    margin-bottom: 50px;
+  }
+
+  .form-screen {
+    padding: 40px 32px;
+  }
+}
+
 @media (max-width: 768px) {
   .auth-box {
     grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .auth-panel-left {
+    padding: 32px 24px;
+    align-items: flex-start;
+  }
+
+  .auth-logo {
+    width: 200px;
+    margin-bottom: 32px;
+  }
+
+  .auth-panel-left h2 {
+    font-size: 1.75rem;
+  }
+
+  .auth-panel-left p {
+    font-size: 1rem;
+    margin-bottom: 24px;
+  }
+
+  .side-panel-btn {
+    max-width: 100%;
+  }
+
+  .auth-panel-right {
+    min-width: 0;
   }
 
   .form-screen {
     padding: 32px 24px;
+  }
+
+  .form-screen h1 {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-wrapper {
+    padding: 16px;
+  }
+
+  .auth-panel {
+    padding: 24px 20px;
+  }
+
+  .form-screen {
+    padding: 24px 20px;
+  }
+
+  .auth-form input,
+  .auth-primary-button {
+    font-size: 14px;
   }
 }

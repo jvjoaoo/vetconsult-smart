@@ -1,5 +1,9 @@
 const authBox = document.getElementById("authBox");
 
+const sideToggleButton = document.getElementById("sideToggleButton");
+const sideTitle = document.getElementById("sideTitle");
+const sideText = document.getElementById("sideText");
+
 const showRegister = document.getElementById("showRegister");
 const showRegisterInline = document.getElementById("showRegisterInline");
 const showLoginInline = document.getElementById("showLoginInline");
@@ -13,19 +17,48 @@ const registerMessage = document.getElementById("registerMessage");
 const loginApiUrl = "http://localhost:3000/auth/tutor/login";
 const registerApiUrl = "http://localhost:3000/tutores";
 
+function atualizarPainelLateral() {
+  if (authBox.classList.contains("login-mode")) {
+    sideTitle.textContent = "Bem-vindo!";
+    sideText.textContent =
+      "Acesse sua conta para acompanhar o cuidado do seu pet com mais praticidade.";
+    sideToggleButton.textContent = "Cadastre-se";
+  } else {
+    sideTitle.textContent = "Novo por aqui?";
+    sideText.textContent =
+      "Crie sua conta para acessar o sistema e acompanhar o cuidado do seu pet com mais praticidade.";
+    sideToggleButton.textContent = "Entrar";
+  }
+}
+
 function abrirCadastro() {
   authBox.classList.remove("login-mode");
   authBox.classList.add("register-mode");
+  atualizarPainelLateral();
 }
 
 function abrirLogin() {
   authBox.classList.remove("register-mode");
   authBox.classList.add("login-mode");
+  atualizarPainelLateral();
 }
 
+function alternarModo(event) {
+  event.preventDefault();
+
+  if (authBox.classList.contains("login-mode")) {
+    abrirCadastro();
+  } else {
+    abrirLogin();
+  }
+}
+
+sideToggleButton?.addEventListener("click", alternarModo);
 showRegister?.addEventListener("click", abrirCadastro);
 showRegisterInline?.addEventListener("click", abrirCadastro);
 showLoginInline?.addEventListener("click", abrirLogin);
+
+atualizarPainelLateral();
 
 loginForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
