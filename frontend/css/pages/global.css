@@ -48,8 +48,8 @@
 }
 
 .auth-panel-left {
-  background: #0b1d18;
-  color: #fff;
+  background: var(--color-brand-dark);
+  color: var(--color-text-light);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -79,8 +79,8 @@
   width: 100%;
   max-width: 290px;
   padding: 14px 20px;
-  background: #ffffff;
-  color: #0b1d18;
+  background: var(--bg-button-color-light);
+  color: var(--color-button-text);
   border-radius: 999px;
   text-decoration: none;
   font-weight: 700;
@@ -90,8 +90,8 @@
 }
 
 .side-panel-btn:hover {
-  background: #14d09b;
-  color: #ffffff;
+  background: var(--color-button-primary-hover);
+  color: var(--color-text-light);
 }
 
 .auth-panel-right {
@@ -152,19 +152,19 @@
   font-size: 15px;
   outline: none;
   box-sizing: border-box;
-  background: #fff;
+  background: var(--color-white);
 }
 
 .auth-form input:focus {
-  border-color: #14d09b;
+  border-color: var(--color-input-focus);
 }
 
 .auth-primary-button {
   padding: 14px 16px;
   border: none;
   border-radius: 10px;
-  background: #14d09b;
-  color: #fff;
+  background: var(--color-button-primary);
+  color: var(--bg-button-color-light);
   font-weight: 700;
   font-size: 1rem;
   cursor: pointer;
@@ -187,7 +187,7 @@
 .auth-switch-text button {
   border: none;
   background: transparent;
-  color: #14d09b;
+  color: var(--color-button-primary);
   font-weight: 700;
   cursor: pointer;
   font-size: 14px;

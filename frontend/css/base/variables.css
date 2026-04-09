@@ -29,12 +29,15 @@
   --color-header-bg: #F0FDF9;
   --color-footer-bg: #F0FDF9;
   --color-card-bg: #FFFFFF;
+  --color-input-focus: #00FFB7;
+  --color-input: #00FFB7;
 
   /* BUTTONS */
 
   --color-button-primary: #14D09B;
   --color-button-primary-hover: #00FFB7;
   --bg-button-color-light: #ffffff;
+  --bg-button-color-dark: #0B1D18;
   --color-button-text: #0B1D18;
 
   /* SHADOW */
