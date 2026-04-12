@@ -14,6 +14,7 @@
 /* PAGES */
 @import "./pages/global.css";
 @import "./pages/login-admin.css";
+@import "./pages/dashboard-tutor.css";
 
 /*
 @import "./pages/admin-usuarios.css";

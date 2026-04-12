@@ -31,13 +31,17 @@ function atualizarPainelLateral() {
   }
 }
 
-function abrirCadastro() {
+function abrirCadastro(event) {
+  if (event) event.preventDefault();
+
   authBox.classList.remove("login-mode");
   authBox.classList.add("register-mode");
   atualizarPainelLateral();
 }
 
-function abrirLogin() {
+function abrirLogin(event) {
+  if (event) event.preventDefault();
+
   authBox.classList.remove("register-mode");
   authBox.classList.add("login-mode");
   atualizarPainelLateral();
@@ -51,6 +55,27 @@ function alternarModo(event) {
   } else {
     abrirLogin();
   }
+}
+
+function salvarSessaoTutor(data) {
+  const tutor = data?.tutor || {};
+
+  localStorage.setItem("tokenTutor", data?.token || "");
+  localStorage.setItem("tutorLogado", "true");
+  localStorage.setItem(
+    "tutorDados",
+    JSON.stringify({
+      id: tutor.TUT_ID || tutor.id || null,
+      nome: tutor.TUT_NOME || tutor.nome || "",
+      email: tutor.TUT_EMAIL || tutor.email || "",
+    })
+  );
+}
+
+function limparSessaoTutor() {
+  localStorage.removeItem("tokenTutor");
+  localStorage.removeItem("tutorLogado");
+  localStorage.removeItem("tutorDados");
 }
 
 sideToggleButton?.addEventListener("click", alternarModo);
@@ -82,12 +107,13 @@ loginForm?.addEventListener("submit", async (event) => {
     const data = await response.json();
 
     if (!response.ok) {
+      limparSessaoTutor();
+      loginMessage.style.color = "red";
       loginMessage.textContent = data.message || "Erro ao realizar login.";
       return;
     }
 
-    localStorage.setItem("tokenTutor", data.token);
-    localStorage.setItem("tutorLogado", JSON.stringify(data.tutor));
+    salvarSessaoTutor(data);
 
     loginMessage.style.color = "green";
     loginMessage.textContent = "Login realizado com sucesso.";
@@ -95,6 +121,8 @@ loginForm?.addEventListener("submit", async (event) => {
     window.location.href = "./dashboard-tutor.html";
   } catch (error) {
     console.error("Erro no login:", error);
+    limparSessaoTutor();
+    loginMessage.style.color = "red";
     loginMessage.textContent = "Não foi possível conectar ao servidor.";
   }
 });
@@ -128,6 +156,7 @@ registerForm?.addEventListener("submit", async (event) => {
     console.log("Resposta cadastro:", response.status, data);
 
     if (!response.ok) {
+      registerMessage.style.color = "red";
       registerMessage.textContent =
         data.message || "Erro ao realizar cadastro.";
       return;
@@ -141,6 +170,7 @@ registerForm?.addEventListener("submit", async (event) => {
     abrirLogin();
   } catch (error) {
     console.error("Erro no cadastro:", error);
+    registerMessage.style.color = "red";
     registerMessage.textContent = "Não foi possível conectar ao servidor.";
   }
 });
