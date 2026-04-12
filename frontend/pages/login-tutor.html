@@ -39,12 +39,14 @@
                     id="loginEmail"
                     placeholder="E-mail"
                     required
+                    autocomplete="email"
                   />
                   <input
                     type="password"
                     id="loginSenha"
                     placeholder="Senha"
                     required
+                    autocomplete="current-password"
                   />
                   <button type="submit" class="auth-primary-button">
                     Entrar
@@ -66,32 +68,51 @@
                     id="registerNome"
                     placeholder="Nome completo"
                     required
+                    autocomplete="name"
                   />
+
                   <input
                     type="text"
                     id="registerCpf"
                     placeholder="CPF"
                     required
+                    maxlength="14"
+                    inputmode="numeric"
+                    autocomplete="off"
                   />
+
                   <input
                     type="email"
                     id="registerEmail"
                     placeholder="E-mail"
                     required
+                    autocomplete="email"
                   />
+
                   <input
                     type="text"
                     id="registerTelefone"
                     placeholder="Telefone"
                     required
+                    maxlength="15"
+                    inputmode="numeric"
+                    autocomplete="tel"
                   />
-                  <input type="date" id="registerDataNascimento" />
+
+                  <input
+                    type="date"
+                    id="registerDataNascimento"
+                    required
+                  />
+
                   <input
                     type="password"
                     id="registerSenha"
                     placeholder="Senha"
                     required
+                    autocomplete="new-password"
                   />
+
                   <button type="submit" class="auth-primary-button">
                     Cadastrar
                   </button>

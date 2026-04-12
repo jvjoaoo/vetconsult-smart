@@ -14,6 +14,9 @@ const registerForm = document.getElementById("registerTutorForm");
 const loginMessage = document.getElementById("loginMessage");
 const registerMessage = document.getElementById("registerMessage");
 
+const registerCpf = document.getElementById("registerCpf");
+const registerTelefone = document.getElementById("registerTelefone");
+
 const loginApiUrl = "http://localhost:3000/auth/tutor/login";
 const registerApiUrl = "http://localhost:3000/tutores";
 
@@ -78,6 +81,50 @@ function limparSessaoTutor() {
   localStorage.removeItem("tutorDados");
 }
 
+/* =========================
+   Máscara CPF
+========================= */
+function aplicarMascaraCPF(valor) {
+  return valor
+    .replace(/\D/g, "")
+    .slice(0, 11)
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+}
+
+/* =========================
+   Máscara Telefone
+========================= */
+function aplicarMascaraTelefone(valor) {
+  const numeros = valor.replace(/\D/g, "").slice(0, 11);
+
+  if (numeros.length <= 2) {
+    return numeros;
+  }
+
+  if (numeros.length <= 7) {
+    return `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+  }
+
+  if (numeros.length <= 10) {
+    return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 6)}-${numeros.slice(6)}`;
+  }
+
+  return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7)}`;
+}
+
+/* =========================
+   Eventos de máscara
+========================= */
+registerCpf?.addEventListener("input", (event) => {
+  event.target.value = aplicarMascaraCPF(event.target.value);
+});
+
+registerTelefone?.addEventListener("input", (event) => {
+  event.target.value = aplicarMascaraTelefone(event.target.value);
+});
+
 sideToggleButton?.addEventListener("click", alternarModo);
 showRegister?.addEventListener("click", abrirCadastro);
 showRegisterInline?.addEventListener("click", abrirCadastro);
@@ -132,11 +179,16 @@ registerForm?.addEventListener("submit", async (event) => {
   registerMessage.textContent = "";
   registerMessage.style.color = "";
 
+  const cpfLimpo = document.getElementById("registerCpf").value.replace(/\D/g, "");
+  const telefoneLimpo = document
+    .getElementById("registerTelefone")
+    .value.replace(/\D/g, "");
+
   const payload = {
     TUT_NOME: document.getElementById("registerNome").value.trim(),
-    TUT_CPF: document.getElementById("registerCpf").value.trim(),
+    TUT_CPF: cpfLimpo,
     TUT_EMAIL: document.getElementById("registerEmail").value.trim(),
-    TUT_TELEFONE: document.getElementById("registerTelefone").value.trim(),
+    TUT_TELEFONE: telefoneLimpo,
     TUT_DTNASC: document.getElementById("registerDataNascimento").value || null,
     TUT_SENHA: document.getElementById("registerSenha").value,
   };
