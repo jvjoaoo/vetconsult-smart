@@ -19,8 +19,14 @@ const registerTelefone = document.getElementById("registerTelefone");
 
 const loginApiUrl = "http://localhost:3000/auth/tutor/login";
 const registerApiUrl = "http://localhost:3000/tutores";
+const tutorApiBaseUrl = "http://localhost:3000/tutores";
 
+/* =========================
+   Painel lateral
+========================= */
 function atualizarPainelLateral() {
+  if (!authBox || !sideTitle || !sideText || !sideToggleButton) return;
+
   if (authBox.classList.contains("login-mode")) {
     sideTitle.textContent = "Bem-vindo!";
     sideText.textContent =
@@ -36,6 +42,7 @@ function atualizarPainelLateral() {
 
 function abrirCadastro(event) {
   if (event) event.preventDefault();
+  if (!authBox) return;
 
   authBox.classList.remove("login-mode");
   authBox.classList.add("register-mode");
@@ -44,6 +51,7 @@ function abrirCadastro(event) {
 
 function abrirLogin(event) {
   if (event) event.preventDefault();
+  if (!authBox) return;
 
   authBox.classList.remove("register-mode");
   authBox.classList.add("login-mode");
@@ -51,7 +59,8 @@ function abrirLogin(event) {
 }
 
 function alternarModo(event) {
-  event.preventDefault();
+  if (event) event.preventDefault();
+  if (!authBox) return;
 
   if (authBox.classList.contains("login-mode")) {
     abrirCadastro();
@@ -60,18 +69,34 @@ function alternarModo(event) {
   }
 }
 
+/* =========================
+   Sessão tutor
+========================= */
 function salvarSessaoTutor(data) {
   const tutor = data?.tutor || {};
 
-  localStorage.setItem("tokenTutor", data?.token || "");
+  const tutorId = tutor.TUT_ID || tutor.id || null;
+  const tutorNome = tutor.TUT_NOME || tutor.nome || "";
+  const tutorEmail = tutor.TUT_EMAIL || tutor.email || "";
+  const tutorStatus = tutor.TUT_STATUS || tutor.status || "ATIVO";
+  const token = data?.token || "";
+
+  if (!tutorId) {
+    throw new Error(
+      "Não foi possível identificar o tutor para salvar a sessão.",
+    );
+  }
+
+  localStorage.setItem("tokenTutor", token);
   localStorage.setItem("tutorLogado", "true");
   localStorage.setItem(
     "tutorDados",
     JSON.stringify({
-      id: tutor.TUT_ID || tutor.id || null,
-      nome: tutor.TUT_NOME || tutor.nome || "",
-      email: tutor.TUT_EMAIL || tutor.email || "",
-    })
+      id: tutorId,
+      nome: tutorNome,
+      email: tutorEmail,
+      status: tutorStatus,
+    }),
   );
 }
 
@@ -79,6 +104,34 @@ function limparSessaoTutor() {
   localStorage.removeItem("tokenTutor");
   localStorage.removeItem("tutorLogado");
   localStorage.removeItem("tutorDados");
+  localStorage.removeItem("tutorReativado");
+}
+
+/* =========================
+   Mensagens de feedback
+========================= */
+function exibirMensagemLogin(texto, cor = "red") {
+  if (!loginMessage) return;
+  loginMessage.style.color = cor;
+  loginMessage.textContent = texto;
+}
+
+function limparMensagemLogin() {
+  if (!loginMessage) return;
+  loginMessage.textContent = "";
+  loginMessage.style.color = "";
+}
+
+function exibirMensagemCadastro(texto, cor = "red") {
+  if (!registerMessage) return;
+  registerMessage.style.color = cor;
+  registerMessage.textContent = texto;
+}
+
+function limparMensagemCadastro() {
+  if (!registerMessage) return;
+  registerMessage.textContent = "";
+  registerMessage.style.color = "";
 }
 
 /* =========================
@@ -115,6 +168,39 @@ function aplicarMascaraTelefone(valor) {
 }
 
 /* =========================
+   Reativação da conta
+========================= */
+async function reativarContaTutor(tutorId, token = "") {
+  if (!tutorId) {
+    throw new Error("ID do tutor não informado para reativação.");
+  }
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(`${tutorApiBaseUrl}/${tutorId}/status`, {
+    method: "PATCH",
+    headers,
+    body: JSON.stringify({
+      TUT_STATUS: "ATIVO",
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Não foi possível reativar a conta.");
+  }
+
+  return data;
+}
+
+/* =========================
    Eventos de máscara
 ========================= */
 registerCpf?.addEventListener("input", (event) => {
@@ -125,6 +211,9 @@ registerTelefone?.addEventListener("input", (event) => {
   event.target.value = aplicarMascaraTelefone(event.target.value);
 });
 
+/* =========================
+   Eventos de troca de modo
+========================= */
 sideToggleButton?.addEventListener("click", alternarModo);
 showRegister?.addEventListener("click", abrirCadastro);
 showRegisterInline?.addEventListener("click", abrirCadastro);
@@ -132,15 +221,25 @@ showLoginInline?.addEventListener("click", abrirLogin);
 
 atualizarPainelLateral();
 
+/* =========================
+   Login tutor
+========================= */
 loginForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
-  loginMessage.textContent = "";
-  loginMessage.style.color = "";
+  limparMensagemLogin();
+
+  const campoEmail = document.getElementById("loginEmail");
+  const campoSenha = document.getElementById("loginSenha");
 
   const payload = {
-    TUT_EMAIL: document.getElementById("loginEmail").value.trim(),
-    TUT_SENHA: document.getElementById("loginSenha").value,
+    TUT_EMAIL: campoEmail?.value.trim() || "",
+    TUT_SENHA: campoSenha?.value || "",
   };
+
+  if (!payload.TUT_EMAIL || !payload.TUT_SENHA) {
+    exibirMensagemLogin("Preencha e-mail e senha.", "red");
+    return;
+  }
 
   try {
     const response = await fetch(loginApiUrl, {
@@ -155,45 +254,101 @@ loginForm?.addEventListener("submit", async (event) => {
 
     if (!response.ok) {
       limparSessaoTutor();
-      loginMessage.style.color = "red";
-      loginMessage.textContent = data.message || "Erro ao realizar login.";
+      exibirMensagemLogin(data.message || "Erro ao realizar login.", "red");
+      return;
+    }
+
+    if (data.contaInativa) {
+      const tutor = data?.tutor || {};
+      const tutorId = tutor.TUT_ID || tutor.id || null;
+      const tutorNome = tutor.TUT_NOME || tutor.nome || "Tutor";
+      const tokenTemporario = data?.token || "";
+
+      const desejaReativar = confirm(
+        `${tutorNome}, sua conta está desativada. Deseja reativá-la para voltar a acessar o sistema?`,
+      );
+
+      if (!desejaReativar) {
+        limparSessaoTutor();
+        exibirMensagemLogin("Sua conta permanece desativada.", "orange");
+        return;
+      }
+
+      await reativarContaTutor(tutorId, tokenTemporario);
+
+      salvarSessaoTutor({
+        token: tokenTemporario,
+        tutor: {
+          TUT_ID: tutorId,
+          TUT_NOME: tutor.TUT_NOME || tutor.nome || "",
+          TUT_EMAIL: tutor.TUT_EMAIL || tutor.email || "",
+          TUT_STATUS: "ATIVO",
+        },
+      });
+
+      localStorage.setItem("tutorReativado", "true");
+
+      exibirMensagemLogin(
+        "Conta reativada com sucesso. Entrando no sistema...",
+        "green",
+      );
+
+      window.location.replace("./dashboard-tutor.html");
       return;
     }
 
     salvarSessaoTutor(data);
+    localStorage.removeItem("tutorReativado");
 
-    loginMessage.style.color = "green";
-    loginMessage.textContent = "Login realizado com sucesso.";
+    exibirMensagemLogin("Login realizado com sucesso.", "green");
 
-    window.location.href = "./dashboard-tutor.html";
+    window.location.replace("./dashboard-tutor.html");
   } catch (error) {
     console.error("Erro no login:", error);
     limparSessaoTutor();
-    loginMessage.style.color = "red";
-    loginMessage.textContent = "Não foi possível conectar ao servidor.";
+    exibirMensagemLogin(
+      error.message || "Não foi possível conectar ao servidor.",
+      "red",
+    );
   }
 });
 
+/* =========================
+   Cadastro tutor
+========================= */
 registerForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
-  registerMessage.textContent = "";
-  registerMessage.style.color = "";
+  limparMensagemCadastro();
 
-  const cpfLimpo = document.getElementById("registerCpf").value.replace(/\D/g, "");
-  const telefoneLimpo = document
-    .getElementById("registerTelefone")
-    .value.replace(/\D/g, "");
+  const campoNome = document.getElementById("registerNome");
+  const campoCpf = document.getElementById("registerCpf");
+  const campoEmail = document.getElementById("registerEmail");
+  const campoTelefone = document.getElementById("registerTelefone");
+  const campoDataNascimento = document.getElementById("registerDataNascimento");
+  const campoSenha = document.getElementById("registerSenha");
+
+  const cpfLimpo = (campoCpf?.value || "").replace(/\D/g, "");
+  const telefoneLimpo = (campoTelefone?.value || "").replace(/\D/g, "");
 
   const payload = {
-    TUT_NOME: document.getElementById("registerNome").value.trim(),
+    TUT_NOME: campoNome?.value.trim() || "",
     TUT_CPF: cpfLimpo,
-    TUT_EMAIL: document.getElementById("registerEmail").value.trim(),
+    TUT_EMAIL: campoEmail?.value.trim() || "",
     TUT_TELEFONE: telefoneLimpo,
-    TUT_DTNASC: document.getElementById("registerDataNascimento").value || null,
-    TUT_SENHA: document.getElementById("registerSenha").value,
+    TUT_DTNASC: campoDataNascimento?.value || null,
+    TUT_SENHA: campoSenha?.value || "",
   };
 
-  console.log("Payload cadastro:", payload);
+  if (
+    !payload.TUT_NOME ||
+    !payload.TUT_CPF ||
+    !payload.TUT_EMAIL ||
+    !payload.TUT_TELEFONE ||
+    !payload.TUT_SENHA
+  ) {
+    exibirMensagemCadastro("Preencha todos os campos obrigatórios.", "red");
+    return;
+  }
 
   try {
     const response = await fetch(registerApiUrl, {
@@ -205,24 +360,24 @@ registerForm?.addEventListener("submit", async (event) => {
     });
 
     const data = await response.json();
-    console.log("Resposta cadastro:", response.status, data);
 
     if (!response.ok) {
-      registerMessage.style.color = "red";
-      registerMessage.textContent =
-        data.message || "Erro ao realizar cadastro.";
+      exibirMensagemCadastro(
+        data.message || "Erro ao realizar cadastro.",
+        "red",
+      );
       return;
     }
 
-    registerMessage.style.color = "green";
-    registerMessage.textContent =
-      "Cadastro realizado com sucesso. Faça seu login.";
+    exibirMensagemCadastro(
+      "Cadastro realizado com sucesso. Faça seu login.",
+      "green",
+    );
 
     registerForm.reset();
     abrirLogin();
   } catch (error) {
     console.error("Erro no cadastro:", error);
-    registerMessage.style.color = "red";
-    registerMessage.textContent = "Não foi possível conectar ao servidor.";
+    exibirMensagemCadastro("Não foi possível conectar ao servidor.", "red");
   }
 });

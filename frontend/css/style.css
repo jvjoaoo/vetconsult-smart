@@ -15,6 +15,7 @@
 @import "./pages/global.css";
 @import "./pages/login-admin.css";
 @import "./pages/dashboard-tutor.css";
+@import "./pages/dashboard-admin.css";
 
 /*
 @import "./pages/admin-usuarios.css";

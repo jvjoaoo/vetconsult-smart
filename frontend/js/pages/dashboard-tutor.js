@@ -2,8 +2,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const tokenTutor = localStorage.getItem("tokenTutor");
   const tutorLogado = localStorage.getItem("tutorLogado");
   const tutorDados = localStorage.getItem("tutorDados");
+  const tutorReativado = localStorage.getItem("tutorReativado") === "true";
 
-  if (!tokenTutor || tutorLogado !== "true" || !tutorDados) {
+  if (tutorLogado !== "true" || !tutorDados) {
     window.location.replace("./login-tutor.html");
     return;
   }
@@ -14,13 +15,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const openProfileMenu = document.getElementById("openProfileMenu");
     const closeProfileMenu = document.getElementById("closeProfileMenu");
     const profileSidebar = document.getElementById("profileSidebar");
-    const profileSidebarOverlay = document.getElementById("profileSidebarOverlay");
+    const profileSidebarOverlay = document.getElementById(
+      "profileSidebarOverlay",
+    );
 
     const dashboardTutorNome = document.getElementById("dashboardTutorNome");
     const profileTutorNome = document.getElementById("profileTutorNome");
     const profileTutorEmail = document.getElementById("profileTutorEmail");
-    const profileTutorNomeInfo = document.getElementById("profileTutorNomeInfo");
-    const profileTutorEmailInfo = document.getElementById("profileTutorEmailInfo");
+    const profileTutorNomeInfo = document.getElementById(
+      "profileTutorNomeInfo",
+    );
+    const profileTutorEmailInfo = document.getElementById(
+      "profileTutorEmailInfo",
+    );
     const profileAvatar = document.getElementById("profileAvatar");
 
     const editTutorBtn = document.getElementById("editTutorBtn");
@@ -29,13 +36,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const logoutTutorBtn = document.getElementById("logoutTutorBtn");
 
     const tutorId = tutor.id || tutor.TUT_ID || null;
-    const nomeTutor = tutor.nome || "Tutor";
-    const emailTutor = tutor.email || "E-mail não informado";
-    const inicialTutor = nomeTutor.trim().charAt(0).toUpperCase() || "T";
+    const nomeTutor = (tutor.nome || tutor.TUT_NOME || "Tutor").trim();
+    const emailTutor = tutor.email || tutor.TUT_EMAIL || "E-mail não informado";
+    const statusTutor = tutor.status || tutor.TUT_STATUS || "ATIVO";
+
+    const primeiroNomeTutor = nomeTutor.split(" ")[0] || "Tutor";
+    const inicialTutor = nomeTutor.charAt(0).toUpperCase() || "T";
+
+    function limparSessaoTutor() {
+      localStorage.removeItem("tokenTutor");
+      localStorage.removeItem("tutorLogado");
+      localStorage.removeItem("tutorDados");
+      localStorage.removeItem("tutorReativado");
+    }
 
     function preencherDadosTutor() {
       if (dashboardTutorNome) {
-        dashboardTutorNome.textContent = `Olá, ${nomeTutor}! 👋`;
+        if (tutorReativado) {
+          dashboardTutorNome.textContent = `Seja bem-vindo de volta, ${primeiroNomeTutor}! 👋`;
+          localStorage.removeItem("tutorReativado");
+        } else {
+          dashboardTutorNome.textContent = `Olá, ${primeiroNomeTutor}! 👋`;
+        }
       }
 
       if (profileTutorNome) {
@@ -83,12 +105,6 @@ document.addEventListener("DOMContentLoaded", () => {
       document.body.style.overflow = "";
     }
 
-    function limparSessaoTutor() {
-      localStorage.removeItem("tokenTutor");
-      localStorage.removeItem("tutorLogado");
-      localStorage.removeItem("tutorDados");
-    }
-
     function logoutTutor() {
       const confirmar = confirm("Deseja realmente sair do sistema?");
 
@@ -99,6 +115,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function editarConta() {
+      if (!tutorId) {
+        alert("Não foi possível identificar o tutor logado.");
+        return;
+      }
+
       window.location.href = `./perfil-tutor.html?id=${tutorId}`;
     }
 
@@ -109,22 +130,25 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const confirmar = confirm(
-        "Deseja realmente inativar sua conta? Você perderá o acesso ao sistema até reativação."
+        "Deseja realmente inativar sua conta? Você perderá o acesso ao sistema até reativá-la novamente no login.",
       );
 
       if (!confirmar) return;
 
       try {
-        const response = await fetch(`http://localhost:3000/tutores/${tutorId}/status`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${tokenTutor}`
+        const response = await fetch(
+          `http://localhost:3000/tutores/${tutorId}/status`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${tokenTutor}`,
+            },
+            body: JSON.stringify({
+              TUT_STATUS: "INATIVO",
+            }),
           },
-          body: JSON.stringify({
-            TUT_STATUS: "INATIVO"
-          })
-        });
+        );
 
         const data = await response.json();
 
@@ -149,19 +173,22 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const confirmar = confirm(
-        "Deseja realmente deletar sua conta de forma permanente? Esta ação não poderá ser desfeita."
+        "Deseja realmente deletar sua conta de forma permanente? Esta ação não poderá ser desfeita.",
       );
 
       if (!confirmar) return;
 
       try {
-        const response = await fetch(`http://localhost:3000/tutores/${tutorId}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${tokenTutor}`
-          }
-        });
+        const response = await fetch(
+          `http://localhost:3000/tutores/${tutorId}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${tokenTutor}`,
+            },
+          },
+        );
 
         const data = await response.json();
 
@@ -177,6 +204,12 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Erro ao deletar conta:", error);
         alert("Não foi possível conectar ao servidor.");
       }
+    }
+
+    if (statusTutor === "INATIVO") {
+      limparSessaoTutor();
+      window.location.replace("./login-tutor.html");
+      return;
     }
 
     openProfileMenu?.addEventListener("click", abrirMenuPerfil);
@@ -196,9 +229,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     preencherDadosTutor();
   } catch (error) {
+    console.error("Erro ao carregar dashboard do tutor:", error);
     localStorage.removeItem("tokenTutor");
     localStorage.removeItem("tutorLogado");
     localStorage.removeItem("tutorDados");
+    localStorage.removeItem("tutorReativado");
     window.location.replace("./login-tutor.html");
   }
 });

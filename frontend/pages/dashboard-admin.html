@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Admin | VetConsult Smart</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="icon" type="image/x-icon" href="../assets/icon-logo.svg" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-container">
+        <a href="./dashboard-admin.html" class="logo-text">
+          <img
+            src="../assets/vetconsultsmart_logo.svg"
+            alt="VetConsult Smart"
+            class="logo"
+          />
+        </a>
+
+        <nav class="menu">
+          <a href="./dashboard-admin.html">Dashboard</a>
+          <a href="./admin-usuarios.html">Usuários</a>
+          <a href="#">Agendamentos</a>
+          <button id="logoutButton" class="btn-primary">Sair</button>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="dashboard-page">
+        <div class="dashboard-container">
+          <div class="dashboard-header">
+            <div>
+              <h1 id="dashboardTitle">Olá, Administrador</h1>
+              <p id="dashboardSubtitle">
+                Acompanhe os principais números do sistema.
+              </p>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="dashboard-card">
+              <div class="dashboard-card-info">
+                <span class="dashboard-card-label">Administradores</span>
+                <strong class="dashboard-card-value" id="totalAdmins">0</strong>
+                <p class="dashboard-card-text">
+                  Total de administradores cadastrados no sistema.
+                </p>
+              </div>
+            </article>
+
+            <article class="dashboard-card">
+              <div class="dashboard-card-info">
+                <span class="dashboard-card-label">Tutores</span>
+                <strong class="dashboard-card-value" id="totalTutores">0</strong>
+                <p class="dashboard-card-text">
+                  Total de tutores cadastrados na plataforma.
+                </p>
+              </div>
+            </article>
+
+            <article class="dashboard-card">
+              <div class="dashboard-card-info">
+                <span class="dashboard-card-label">Pets</span>
+                <strong class="dashboard-card-value" id="totalPets">0</strong>
+                <p class="dashboard-card-text">
+                  Total de pets cadastrados pelos tutores.
+                </p>
+              </div>
+            </article>
+
+            <article class="dashboard-card">
+              <div class="dashboard-card-info">
+                <span class="dashboard-card-label">Agendamentos</span>
+                <strong class="dashboard-card-value" id="totalAgendamentos">0</strong>
+                <p class="dashboard-card-text">
+                  Total de agendamentos registrados no sistema.
+                </p>
+              </div>
+            </article>
+          </div>
+
+          <section class="dashboard-panel">
+            <h2>Resumo do sistema</h2>
+            <p>
+              Este painel apresenta uma visão geral dos registros da plataforma.
+              Conforme novos tutores, pets e agendamentos forem sendo cadastrados,
+              os números serão atualizados dinamicamente.
+            </p>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-container">
+        <!-- Logo -->
+        <div class="footer-logo">
+          <img
+            src="../assets/vetconsultsmart_logo.svg"
+            alt="VetConsult Smart"
+            class="logo"
+          />
+        </div>
+
+        <!-- Redes sociais -->
+        <div class="footer-social">
+          <a href="#" class="social-icon"></a>
+          <a href="#" class="social-icon"></a>
+          <a href="#" class="social-icon"></a>
+        </div>
+
+        <!-- Links -->
+        <div class="footer-links">
+          <a href="#">FAQ</a>
+          <a href="#">CONTATO</a>
+          <a href="#">LOREM</a>
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-copy">
+          © 2026 Vetconsult Smart. Todos os direitos reservados.
+        </div>
+      </div>
+    </footer>
+
+    <script src="../js/dashboard-admin.js"></script>
+  </body>
+</html>
