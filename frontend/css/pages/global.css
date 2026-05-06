@@ -168,7 +168,9 @@
   font-weight: 700;
   font-size: 1rem;
   cursor: pointer;
-  transition: opacity 0.3s ease, transform 0.2s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.2s ease;
 }
 
 .auth-primary-button:hover {
@@ -202,6 +204,18 @@
   margin-top: 14px;
   font-size: 14px;
   font-weight: 500;
+}
+
+.admin-access-link {
+  margin: 50px 0px 0px 25px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  transition: 0.2s ease;
+  text-decoration: underline;
+}
+
+.admin-access-link:hover {
+  color: #ffffff;
 }
 
 /* ===== RESPONSIVO ===== */

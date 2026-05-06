@@ -28,35 +28,38 @@ function limparSessaoAdmin() {
   localStorage.removeItem("tokenAdmin");
   localStorage.removeItem("adminLogado");
   localStorage.removeItem("adminDados");
+
+  localStorage.removeItem("token");
+  localStorage.removeItem("usuarioLogado");
+  localStorage.removeItem("tipoUsuario");
 }
 
 function salvarSessaoAdmin(data) {
   const admin = data?.usuario || {};
-
-  const adminId = admin.id || null;
-  const adminNome = admin.nome || "";
-  const adminEmail = admin.email || "";
   const token = data?.token || "";
+
+  const adminId = admin.id || admin.USR_ID || null;
+  const adminNome = admin.nome || admin.USR_NAME || "";
+  const adminEmail = admin.email || admin.USR_EMAIL || "";
 
   if (!token || !adminId) {
     throw new Error("Dados insuficientes para salvar a sessão do administrador.");
   }
 
+  const dadosAdmin = {
+    id: adminId,
+    nome: adminNome,
+    email: adminEmail,
+    perfil: "admin",
+  };
+
   localStorage.setItem("tokenAdmin", token);
   localStorage.setItem("adminLogado", "true");
-  localStorage.setItem(
-    "adminDados",
-    JSON.stringify({
-      id: adminId,
-      nome: adminNome,
-      email: adminEmail,
-      perfil: admin.perfil || "admin"
-    })
-  );
+  localStorage.setItem("adminDados", JSON.stringify(dadosAdmin));
 
-  localStorage.removeItem("token");
-  localStorage.removeItem("usuarioLogado");
-  localStorage.removeItem("tipoUsuario");
+  localStorage.setItem("token", token);
+  localStorage.setItem("usuarioLogado", JSON.stringify(dadosAdmin));
+  localStorage.setItem("tipoUsuario", "admin");
 }
 
 if (form) {
@@ -84,9 +87,9 @@ if (form) {
       const response = await fetch(loginUrl, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, senha })
+        body: JSON.stringify({ email, senha }),
       });
 
       const data = await response.json();
@@ -94,7 +97,7 @@ if (form) {
       if (!response.ok) {
         if (mensagem) {
           mensagem.textContent =
-            data?.erro || "E-mail ou senha inválidos.";
+            data?.erro || data?.mensagem || "E-mail ou senha inválidos.";
         }
         return;
       }

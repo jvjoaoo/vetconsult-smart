@@ -15,7 +15,7 @@
 
 .dashboard-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; 
   align-items: center;
   gap: 16px;
   margin-bottom: 32px;
@@ -93,6 +93,21 @@
   margin: 0;
   color: #4b5b57;
   line-height: 1.6;
+}
+
+.dashboard-card-link {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #14d09b;
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+.dashboard-card-link:hover {
+  opacity: 0.8;
 }
 
 @media (max-width: 992px) {

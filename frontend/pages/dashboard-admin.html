@@ -22,7 +22,7 @@
           <a href="./dashboard-admin.html">Dashboard</a>
           <a href="./admin-usuarios.html">Usuários</a>
           <a href="#">Agendamentos</a>
-          <button id="logoutButton" class="btn-primary">Sair</button>
+          <button id="btnSairAdmin" class="btn-primary">Sair</button>
         </nav>
       </div>
     </header>
@@ -47,13 +47,19 @@
                 <p class="dashboard-card-text">
                   Total de administradores cadastrados no sistema.
                 </p>
+
+                <a href="./admin-usuarios.html" class="dashboard-card-link">
+                  Ver administradores
+                </a>
               </div>
             </article>
 
             <article class="dashboard-card">
               <div class="dashboard-card-info">
                 <span class="dashboard-card-label">Tutores</span>
-                <strong class="dashboard-card-value" id="totalTutores">0</strong>
+                <strong class="dashboard-card-value" id="totalTutores"
+                  >0</strong
+                >
                 <p class="dashboard-card-text">
                   Total de tutores cadastrados na plataforma.
                 </p>
@@ -73,7 +79,9 @@
             <article class="dashboard-card">
               <div class="dashboard-card-info">
                 <span class="dashboard-card-label">Agendamentos</span>
-                <strong class="dashboard-card-value" id="totalAgendamentos">0</strong>
+                <strong class="dashboard-card-value" id="totalAgendamentos"
+                  >0</strong
+                >
                 <p class="dashboard-card-text">
                   Total de agendamentos registrados no sistema.
                 </p>
@@ -85,8 +93,8 @@
             <h2>Resumo do sistema</h2>
             <p>
               Este painel apresenta uma visão geral dos registros da plataforma.
-              Conforme novos tutores, pets e agendamentos forem sendo cadastrados,
-              os números serão atualizados dinamicamente.
+              Conforme novos tutores, pets e agendamentos forem sendo
+              cadastrados, os números serão atualizados dinamicamente.
             </p>
           </section>
         </div>
@@ -125,6 +133,6 @@
       </div>
     </footer>
 
-    <script src="../js/dashboard-admin.js"></script>
+    <script src="../js/pages/dashboard-admin.js"></script>
   </body>
 </html>

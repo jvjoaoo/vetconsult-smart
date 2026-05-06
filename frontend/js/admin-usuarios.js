@@ -1,8 +1,11 @@
 const apiUrl = "http://localhost:3000/usuarios_admin";
 const usuariosTableBody = document.getElementById("usuariosTableBody");
-const token = localStorage.getItem("token");
 
-if (!token) {
+const tokenAdmin = localStorage.getItem("tokenAdmin");
+const adminLogado = localStorage.getItem("adminLogado");
+const adminDados = localStorage.getItem("adminDados");
+
+if (!tokenAdmin || adminLogado !== "true" || !adminDados) {
   window.location.href = "./login-admin.html";
 }
 
@@ -29,20 +32,34 @@ function formatarTelefone(telefone) {
   return telefone;
 }
 
+function limparSessaoAdmin() {
+  localStorage.removeItem("tokenAdmin");
+  localStorage.removeItem("adminLogado");
+  localStorage.removeItem("adminDados");
+}
+
+function sairAdmin() {
+  const confirmarSaida = confirm("Deseja realmente sair?");
+
+  if (!confirmarSaida) return;
+
+  limparSessaoAdmin();
+
+  window.location.href = "./login-admin.html";
+}
+
 async function listarUsuarios() {
   try {
     const response = await fetch(apiUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
+        "Authorization": `Bearer ${tokenAdmin}`
       }
     });
 
     if (response.status === 401 || response.status === 403) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("usuarioLogado");
-      localStorage.removeItem("tipoUsuario");
+      limparSessaoAdmin();
       alert("Sua sessão expirou ou você não tem permissão para acessar esta página.");
       window.location.href = "./login-admin.html";
       return;
@@ -93,14 +110,12 @@ async function deletarUsuario(id) {
     const response = await fetch(`${apiUrl}/${id}`, {
       method: "DELETE",
       headers: {
-        "Authorization": `Bearer ${token}`
+        "Authorization": `Bearer ${tokenAdmin}`
       }
     });
 
     if (response.status === 401 || response.status === 403) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("usuarioLogado");
-      localStorage.removeItem("tipoUsuario");
+      limparSessaoAdmin();
       alert("Sua sessão expirou ou você não tem permissão para realizar esta ação.");
       window.location.href = "./login-admin.html";
       return;
@@ -117,30 +132,11 @@ async function deletarUsuario(id) {
   }
 }
 
-listarUsuarios();
-
 /* BTN SAIR */
-const btnLogout = document.getElementById("btn-logout");
+const btnSairAdmin = document.getElementById("btnSairAdmin");
 
-if (btnLogout) {
-  btnLogout.addEventListener("click", () => {
-    
-    if (confirm("Deseja realmente sair?")) {
-      // Remove dados do usuário
-      localStorage.removeItem("token");
-      localStorage.removeItem("usuario"); // se existir
-
-      // Redireciona para login
-      window.location.href = "../pages/login-admin.html";
-    }
-
-  });
+if (btnSairAdmin) {
+  btnSairAdmin.addEventListener("click", sairAdmin);
 }
 
-
-
-token = localStorage.getItem("token");
-
-if (!token) {
-  window.location.href = "../pages/login-admin.html";
-}
+listarUsuarios();

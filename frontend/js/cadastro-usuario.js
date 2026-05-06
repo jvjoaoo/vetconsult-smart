@@ -8,7 +8,7 @@ const campoDataNascimento = document.getElementById("USR_DTNASC");
 const campoSenha = document.getElementById("USR_SENHA");
 
 function obterToken() {
-  return localStorage.getItem("token");
+  return localStorage.getItem("tokenAdmin") || localStorage.getItem("token");
 }
 
 function redirecionarParaLogin() {
