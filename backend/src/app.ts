@@ -11,7 +11,7 @@ import usuarioRoutes from "./routes/usuarioRoutes";
 import authRoutes from "./routes/authRoutes";
 import tutorRoutes from "./routes/tutorRoutes";
 import authTutorRoutes from "./routes/authTutorRoutes";
-
+import petRoutes from "./routes/petRoutes";
 
 dotenv.config();
 
@@ -28,12 +28,12 @@ app.use(authRoutes);
 // Protegidas por autenticação (middleware verificarTokenAdmin)
 app.use(usuarioRoutes);
 
-
 // ==== ROTAS DE USUÁRIOS TUTORES ====
 app.use(tutorRoutes);
 app.use(authTutorRoutes);
 
+// ==== ROTAS DE PETS ====
+// CRUD de pets vinculado ao tutor autenticado
+app.use(petRoutes);
+
 export default app;
-
-
-

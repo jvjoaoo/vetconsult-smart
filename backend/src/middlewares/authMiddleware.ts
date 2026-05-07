@@ -7,6 +7,12 @@ export interface AuthRequest extends Request {
     email: string;
     perfil: string;
   };
+
+  tutor?: {
+    id: number;
+    email: string;
+    perfil: string;
+  };
 }
 
 export function verificarTokenAdmin(
@@ -35,11 +41,52 @@ export function verificarTokenAdmin(
     ) as AuthRequest["usuario"];
 
     if (!decoded || decoded.perfil !== "admin") {
-      res.status(403).json({ erro: "Acesso permitido apenas para administradores." });
+      res.status(403).json({
+        erro: "Acesso permitido apenas para administradores.",
+      });
       return;
     }
 
     req.usuario = decoded;
+    next();
+  } catch (error) {
+    res.status(401).json({ erro: "Token expirado ou inválido." });
+  }
+}
+
+export function verificarTokenTutor(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): void {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    res.status(401).json({ erro: "Token não informado." });
+    return;
+  }
+
+  const [, token] = authHeader.split(" ");
+
+  if (!token) {
+    res.status(401).json({ erro: "Token inválido." });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET as string
+    ) as AuthRequest["tutor"];
+
+    if (!decoded || decoded.perfil !== "tutor") {
+      res.status(403).json({
+        erro: "Acesso permitido apenas para tutores.",
+      });
+      return;
+    }
+
+    req.tutor = decoded;
     next();
   } catch (error) {
     res.status(401).json({ erro: "Token expirado ou inválido." });
