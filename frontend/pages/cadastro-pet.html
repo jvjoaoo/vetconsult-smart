@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastrar Pet | VetConsult Smart</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="icon" type="image/x-icon" href="../assets/icon-logo.svg" />
+  </head>
+
+  <body class="dashboard-page">
+    <header class="topbar tutor-topbar">
+      <div class="topbar-container tutor-topbar-container">
+        <a href="./dashboard-tutor.html" class="logo-text">
+          <img
+            src="../assets/vetconsultsmart_logo.svg"
+            alt="VetConsult Smart"
+            class="logo"
+          />
+        </a>
+
+        <nav class="menu tutor-menu">
+          <a href="./dashboard-tutor.html" data-page="dashboard">Painel</a>
+          <a href="./meus-pets.html" data-page="pets">Meus Pets</a>
+          <a href="#" data-page="agendamentos">Agendamentos</a>
+          <a href="./perfil-tutor.html" data-page="perfil">Meu Perfil</a>
+        </nav>
+
+        <button type="button" class="profile-menu-button" id="openProfileMenu">
+          <span class="profile-menu-avatar" id="topbarProfileAvatar">T</span>
+          <span class="profile-menu-name" id="topbarProfileName">Tutor</span>
+        </button>
+      </div>
+    </header>
+
+    <div
+      class="profile-sidebar-overlay"
+      id="profileSidebarOverlay"
+      aria-hidden="true"
+    ></div>
+
+    <aside
+      class="profile-sidebar"
+      id="profileSidebar"
+      aria-hidden="true"
+      aria-labelledby="profileSidebarTitle"
+    >
+      <div class="profile-sidebar-header">
+        <h2 id="profileSidebarTitle">Meu Perfil</h2>
+
+        <button
+          type="button"
+          class="profile-sidebar-close"
+          id="closeProfileMenu"
+          aria-label="Fechar menu de perfil"
+        >
+          ×
+        </button>
+      </div>
+
+      <div class="profile-sidebar-body">
+        <div class="profile-card">
+          <div class="profile-avatar" id="profileAvatar">T</div>
+
+          <div class="profile-info">
+            <h3 id="profileTutorNome">Tutor</h3>
+            <p id="profileTutorEmail">email@exemplo.com</p>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <h4>Informações da conta</h4>
+
+          <div class="profile-detail-item">
+            <span class="label">Nome</span>
+            <span class="value" id="profileTutorNomeInfo">-</span>
+          </div>
+
+          <div class="profile-detail-item">
+            <span class="label">E-mail</span>
+            <span class="value" id="profileTutorEmailInfo">-</span>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <h4>Ações</h4>
+
+          <button type="button" class="sidebar-action-btn" id="editTutorBtn">
+            Editar conta
+          </button>
+
+          <button
+            type="button"
+            class="sidebar-action-btn warning"
+            id="inactivateTutorBtn"
+          >
+            Inativar conta
+          </button>
+
+          <button
+            type="button"
+            class="sidebar-action-btn danger-outline"
+            id="deleteTutorBtn"
+          >
+            Deletar conta
+          </button>
+
+          <button
+            type="button"
+            class="sidebar-action-btn danger"
+            id="logoutTutorBtn"
+          >
+            Sair do sistema
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <main>
+      <section class="container">
+        <div class="header-actions">
+          <div>
+            <h1>Cadastrar Pet</h1>
+            <p>Preencha as informações do seu pet.</p>
+          </div>
+
+          <a href="./meus-pets.html" class="btn-secondary">Voltar</a>
+        </div>
+
+        <form class="form-card" id="cadastroPetForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="PET_NOME">Nome do pet *</label>
+              <input
+                type="text"
+                id="PET_NOME"
+                name="PET_NOME"
+                placeholder="Ex: Thor"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="PET_ESPECIE">Espécie *</label>
+              <select id="PET_ESPECIE" name="PET_ESPECIE" required>
+                <option value="">Selecione</option>
+                <option value="Cachorro">Cachorro</option>
+                <option value="Gato">Gato</option>
+                <option value="Ave">Ave</option>
+                <option value="Roedor">Roedor</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="PET_RACA">Raça</label>
+              <input
+                type="text"
+                id="PET_RACA"
+                name="PET_RACA"
+                placeholder="Ex: Golden Retriever"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="PET_SEXO">Sexo *</label>
+              <select id="PET_SEXO" name="PET_SEXO" required>
+                <option value="">Selecione</option>
+                <option value="Macho">Macho</option>
+                <option value="Fêmea">Fêmea</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="PET_PORTE">Porte</label>
+              <select id="PET_PORTE" name="PET_PORTE">
+                <option value="">Selecione</option>
+                <option value="Pequeno">Pequeno</option>
+                <option value="Médio">Médio</option>
+                <option value="Grande">Grande</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="PET_PESO">Peso</label>
+              <input
+                type="number"
+                id="PET_PESO"
+                name="PET_PESO"
+                placeholder="Ex: 12.5"
+                step="0.01"
+                min="0"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="PET_COR">Cor</label>
+              <input
+                type="text"
+                id="PET_COR"
+                name="PET_COR"
+                placeholder="Ex: Caramelo"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="PET_DTNASC">Data de nascimento</label>
+              <input type="date" id="PET_DTNASC" name="PET_DTNASC" />
+            </div>
+          </div>
+
+          <p class="form-message" id="mensagemPet"></p>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" id="salvarPetBtn">
+              Cadastrar pet
+            </button>
+
+            <a href="./meus-pets.html" class="btn-secondary">Cancelar</a>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <script src="../js/pages/tutor-menu.js"></script>
+    <script src="../js/pages/cadastro-pet.js"></script>
+  </body>
+</html>

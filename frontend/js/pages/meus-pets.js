@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const petNome = pet.PET_NOME || pet.nome || "Pet sem nome";
         const petEspecie =
           pet.PET_ESPECIE || pet.especie || "Espécie não informada";
-        const petRaca = pet.PET_RACA || pet.raca || "Raça não informada";
+        const petRaca = pet.PET_RACA || pet.raca || "SRD";
         const petSexo = pet.PET_SEXO || pet.sexo || "Sexo não informado";
         const petPorte = pet.PET_PORTE || pet.porte || "Porte não informado";
 

@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const petNome = pet.PET_NOME || pet.nome || "Pet sem nome";
         const petEspecie =
           pet.PET_ESPECIE || pet.especie || "Espécie não informada";
-        const petRaca = pet.PET_RACA || pet.raca || "Raça não informada";
+        const petRaca = pet.PET_RACA || pet.raca || "SRD";
 
         return `
           <article class="pet-card">

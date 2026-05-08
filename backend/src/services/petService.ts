@@ -39,7 +39,7 @@ export async function criarPet(dadosPet: any) {
       PET_PESO,
       PET_COR,
       PET_DTNASC,
-      PET_TUTOR_ID
+      TUT_ID
     )
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
@@ -52,7 +52,7 @@ export async function criarPet(dadosPet: any) {
       dadosPet.PET_PESO,
       dadosPet.PET_COR,
       dadosPet.PET_DTNASC,
-      dadosPet.PET_TUTOR_ID,
+      dadosPet.TUT_ID,
     ]
   );
 

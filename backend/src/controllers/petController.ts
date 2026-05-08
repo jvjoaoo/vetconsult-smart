@@ -110,7 +110,7 @@ export async function postPet(req: AuthRequest, res: Response) {
       PET_PESO: PET_PESO || null,
       PET_COR: PET_COR || null,
       PET_DTNASC: PET_DTNASC || null,
-      PET_TUTOR_ID: tutorId,
+      TUT_ID: tutorId,
     };
 
     const petCriado = await criarPet(dadosPet);
