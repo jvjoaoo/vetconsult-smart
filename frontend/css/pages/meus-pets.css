@@ -1,0 +1,130 @@
+/* ==== MEUS PETS ==== */
+
+.pets-list {
+  display: grid;
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.pet-card-list {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(11, 29, 24, 0.08);
+}
+
+.pet-card-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: #eff9f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+}
+
+.pet-card-content h3 {
+  margin: 0 0 8px;
+  color: #0b1d18;
+  font-size: 20px;
+}
+
+.pet-card-content p {
+  margin: 4px 0;
+  color: #4d5c57;
+  font-size: 14px;
+}
+
+.pet-card-content strong {
+  color: #0b1d18;
+}
+
+.pet-card-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.empty-pets {
+  width: 100%;
+  padding: 48px 24px;
+  background: #ffffff;
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(11, 29, 24, 0.08);
+}
+
+.empty-pets-icon {
+  font-size: 42px;
+  margin-bottom: 12px;
+}
+
+.empty-pets h3 {
+  margin: 0 0 8px;
+  color: #0b1d18;
+  font-size: 22px;
+}
+
+.empty-pets p {
+  max-width: 520px;
+  margin: 0 auto 20px;
+  color: #4d5c57;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.btn-danger {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #ffe8e8;
+  color: #b42318;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: #ffd1d1;
+  transform: translateY(-1px);
+}
+
+.menu a.active {
+  color: #14d09b;
+  font-weight: 700;
+}
+
+/* ==== RESPONSIVO MEUS PETS ==== */
+
+@media (max-width: 768px) {
+  .pet-card-list {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .pet-card-icon {
+    margin: 0 auto;
+  }
+
+  .pet-card-actions {
+    justify-content: center;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .header-actions .btn-primary {
+    width: 100%;
+  }
+}

@@ -1,3 +1,5 @@
+document.querySelector('[data-page="perfil"]')?.classList.add("active");
+
 document.addEventListener("DOMContentLoaded", () => {
   const tokenTutor = localStorage.getItem("tokenTutor");
   const tutorLogado = localStorage.getItem("tutorLogado");
@@ -208,3 +210,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   carregarDadosTutor();
 });
+

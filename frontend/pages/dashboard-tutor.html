@@ -10,7 +10,7 @@
   </head>
   <body class="dashboard-page">
     <header class="topbar tutor-topbar">
-      <div class="topbar-container">
+      <div class="topbar-container tutor-topbar-container">
         <a href="./dashboard-tutor.html" class="logo-text">
           <img
             src="../assets/vetconsultsmart_logo.svg"
@@ -20,18 +20,16 @@
         </a>
 
         <nav class="menu tutor-menu">
-          <a href="./dashboard-tutor.html" class="active">PAINEL</a>
-          <a href="./meus-pets.html">MEUS PETS</a>
-          <a href="./agendamentos.html">AGENDAMENTOS</a>
-
-          <button
-            type="button"
-            class="profile-menu-trigger"
-            id="openProfileMenu"
-          >
-            MEU PERFIL
-          </button>
+          <a href="./dashboard-tutor.html" data-page="dashboard">Painel</a>
+          <a href="./meus-pets.html" data-page="pets">Meus Pets</a>
+          <a href="#" data-page="agendamentos">Agendamentos</a>
+          <a href="./perfil-tutor.html" data-page="perfil">Meu Perfil</a>
         </nav>
+
+        <button type="button" class="profile-menu-button" id="openProfileMenu">
+          <span class="profile-menu-avatar" id="topbarProfileAvatar">T</span>
+          <span class="profile-menu-name" id="topbarProfileName">Tutor</span>
+        </button>
       </div>
     </header>
 
@@ -133,7 +131,12 @@
             <a href="./agendar-consulta.html" class="btn-primary">
               Agendar consulta
             </a>
-            <a href="./cadastro-pet.html" class="btn-secondary">
+
+            <a
+              href="./cadastro-pet.html"
+              class="btn-secondary"
+              id="cadastrarPetBtn"
+            >
               Cadastrar pet
             </a>
           </div>
@@ -145,7 +148,7 @@
           <div class="summary-icon">🐾</div>
           <div class="summary-content">
             <h2>Meus Pets</h2>
-            <p>Você ainda não cadastrou nenhum pet</p>
+            <p id="petsResumoTexto">Você ainda não cadastrou nenhum pet</p>
           </div>
         </article>
 
@@ -177,17 +180,23 @@
       <section class="dashboard-section">
         <div class="section-header">
           <h2>Meus Pets</h2>
-          <a href="./meus-pets.html" class="section-link">Ver todos</a>
+          <a href="./meus-pets.html" class="section-link" id="verTodosPetsBtn">
+            Ver todos
+          </a>
         </div>
 
-        <div class="empty-state">
+        <div class="empty-state" id="petsContainer">
           <div class="empty-state-icon">🐶</div>
           <h3>Nenhum pet cadastrado</h3>
           <p>
             Assim que você cadastrar seu primeiro pet, as informações aparecerão
             aqui no painel.
           </p>
-          <a href="./cadastro-pet.html" class="btn-primary">
+          <a
+            href="./cadastro-pet.html"
+            class="btn-primary"
+            id="cadastrarPrimeiroPetBtn"
+          >
             Cadastrar primeiro pet
           </a>
         </div>
@@ -271,7 +280,7 @@
         </div>
       </div>
     </footer>
-
+    <script src="../js/pages/tutor-menu.js"></script>
     <script src="../js/pages/dashboard-tutor.js"></script>
   </body>
 </html>

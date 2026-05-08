@@ -5,7 +5,7 @@ export async function listarPets(tutorId: number) {
     `
     SELECT *
     FROM pets
-    WHERE PET_TUTOR_ID = ?
+    WHERE TUT_ID = ?
     `,
     [tutorId]
   );
@@ -19,7 +19,7 @@ export async function buscarPetPorId(id: number, tutorId: number) {
     SELECT *
     FROM pets
     WHERE PET_ID = ?
-    AND PET_TUTOR_ID = ?
+    AND TUT_ID = ?
     `,
     [id, tutorId]
   );
@@ -77,7 +77,7 @@ export async function atualizarPet(
       PET_COR = ?,
       PET_DTNASC = ?
     WHERE PET_ID = ?
-    AND PET_TUTOR_ID = ?
+    AND TUT_ID = ?
     `,
     [
       dadosPet.PET_NOME,
@@ -101,7 +101,7 @@ export async function deletarPet(id: number, tutorId: number) {
     `
     DELETE FROM pets
     WHERE PET_ID = ?
-    AND PET_TUTOR_ID = ?
+    AND TUT_ID = ?
     `,
     [id, tutorId]
   );

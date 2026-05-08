@@ -1,239 +1,216 @@
 document.addEventListener("DOMContentLoaded", () => {
+  document.querySelector('[data-page="dashboard"]')?.classList.add("active");
+
+  const apiPetsUrl = "http://localhost:3000/pets";
+
   const tokenTutor = localStorage.getItem("tokenTutor");
   const tutorLogado = localStorage.getItem("tutorLogado");
   const tutorDados = localStorage.getItem("tutorDados");
   const tutorReativado = localStorage.getItem("tutorReativado") === "true";
 
-  if (tutorLogado !== "true" || !tutorDados) {
-    window.location.replace("./login-tutor.html");
-    return;
-  }
+  const dashboardTutorNome = document.getElementById("dashboardTutorNome");
+  const cadastrarPetBtn = document.getElementById("cadastrarPetBtn");
+  const cadastrarPrimeiroPetBtn = document.getElementById(
+    "cadastrarPrimeiroPetBtn",
+  );
+  const verTodosPetsBtn = document.getElementById("verTodosPetsBtn");
+  const petsResumoTexto = document.getElementById("petsResumoTexto");
+  const petsContainer = document.getElementById("petsContainer");
 
-  try {
-    const tutor = JSON.parse(tutorDados);
-
-    const openProfileMenu = document.getElementById("openProfileMenu");
-    const closeProfileMenu = document.getElementById("closeProfileMenu");
-    const profileSidebar = document.getElementById("profileSidebar");
-    const profileSidebarOverlay = document.getElementById(
-      "profileSidebarOverlay",
-    );
-
-    const dashboardTutorNome = document.getElementById("dashboardTutorNome");
-    const profileTutorNome = document.getElementById("profileTutorNome");
-    const profileTutorEmail = document.getElementById("profileTutorEmail");
-    const profileTutorNomeInfo = document.getElementById(
-      "profileTutorNomeInfo",
-    );
-    const profileTutorEmailInfo = document.getElementById(
-      "profileTutorEmailInfo",
-    );
-    const profileAvatar = document.getElementById("profileAvatar");
-
-    const editTutorBtn = document.getElementById("editTutorBtn");
-    const inactivateTutorBtn = document.getElementById("inactivateTutorBtn");
-    const deleteTutorBtn = document.getElementById("deleteTutorBtn");
-    const logoutTutorBtn = document.getElementById("logoutTutorBtn");
-
-    const tutorId = tutor.id || tutor.TUT_ID || null;
-    const nomeTutor = (tutor.nome || tutor.TUT_NOME || "Tutor").trim();
-    const emailTutor = tutor.email || tutor.TUT_EMAIL || "E-mail não informado";
-    const statusTutor = tutor.status || tutor.TUT_STATUS || "ATIVO";
-
-    const primeiroNomeTutor = nomeTutor.split(" ")[0] || "Tutor";
-    const inicialTutor = nomeTutor.charAt(0).toUpperCase() || "T";
-
-    function limparSessaoTutor() {
-      localStorage.removeItem("tokenTutor");
-      localStorage.removeItem("tutorLogado");
-      localStorage.removeItem("tutorDados");
-      localStorage.removeItem("tutorReativado");
-    }
-
-    function preencherDadosTutor() {
-      if (dashboardTutorNome) {
-        if (tutorReativado) {
-          dashboardTutorNome.textContent = `Seja bem-vindo de volta, ${primeiroNomeTutor}! 👋`;
-          localStorage.removeItem("tutorReativado");
-        } else {
-          dashboardTutorNome.textContent = `Olá, ${primeiroNomeTutor}! 👋`;
-        }
-      }
-
-      if (profileTutorNome) {
-        profileTutorNome.textContent = nomeTutor;
-      }
-
-      if (profileTutorEmail) {
-        profileTutorEmail.textContent = emailTutor;
-      }
-
-      if (profileTutorNomeInfo) {
-        profileTutorNomeInfo.textContent = nomeTutor;
-      }
-
-      if (profileTutorEmailInfo) {
-        profileTutorEmailInfo.textContent = emailTutor;
-      }
-
-      if (profileAvatar) {
-        profileAvatar.textContent = inicialTutor;
-      }
-    }
-
-    function abrirMenuPerfil() {
-      profileSidebar?.classList.add("open");
-      profileSidebar?.setAttribute("aria-hidden", "false");
-
-      profileSidebarOverlay?.classList.add("open");
-      profileSidebarOverlay?.setAttribute("aria-hidden", "false");
-
-      openProfileMenu?.classList.add("active");
-
-      document.body.style.overflow = "hidden";
-    }
-
-    function fecharMenuPerfil() {
-      profileSidebar?.classList.remove("open");
-      profileSidebar?.setAttribute("aria-hidden", "true");
-
-      profileSidebarOverlay?.classList.remove("open");
-      profileSidebarOverlay?.setAttribute("aria-hidden", "true");
-
-      openProfileMenu?.classList.remove("active");
-
-      document.body.style.overflow = "";
-    }
-
-    function logoutTutor() {
-      const confirmar = confirm("Deseja realmente sair do sistema?");
-
-      if (!confirmar) return;
-
-      limparSessaoTutor();
-      window.location.replace("./login-tutor.html");
-    }
-
-    function editarConta() {
-      if (!tutorId) {
-        alert("Não foi possível identificar o tutor logado.");
-        return;
-      }
-
-      window.location.href = `./perfil-tutor.html?id=${tutorId}`;
-    }
-
-    async function inativarConta() {
-      if (!tutorId) {
-        alert("Não foi possível identificar o tutor logado.");
-        return;
-      }
-
-      const confirmar = confirm(
-        "Deseja realmente inativar sua conta? Você perderá o acesso ao sistema até reativá-la novamente no login.",
-      );
-
-      if (!confirmar) return;
-
-      try {
-        const response = await fetch(
-          `http://localhost:3000/tutores/${tutorId}/status`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${tokenTutor}`,
-            },
-            body: JSON.stringify({
-              TUT_STATUS: "INATIVO",
-            }),
-          },
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          alert(data.message || "Não foi possível inativar a conta.");
-          return;
-        }
-
-        alert("Conta inativada com sucesso.");
-        limparSessaoTutor();
-        window.location.replace("./login-tutor.html");
-      } catch (error) {
-        console.error("Erro ao inativar conta:", error);
-        alert("Não foi possível conectar ao servidor.");
-      }
-    }
-
-    async function deletarConta() {
-      if (!tutorId) {
-        alert("Não foi possível identificar o tutor logado.");
-        return;
-      }
-
-      const confirmar = confirm(
-        "Deseja realmente deletar sua conta de forma permanente? Esta ação não poderá ser desfeita.",
-      );
-
-      if (!confirmar) return;
-
-      try {
-        const response = await fetch(
-          `http://localhost:3000/tutores/${tutorId}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${tokenTutor}`,
-            },
-          },
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          alert(data.message || "Não foi possível deletar a conta.");
-          return;
-        }
-
-        alert("Conta deletada com sucesso.");
-        limparSessaoTutor();
-        window.location.replace("./login-tutor.html");
-      } catch (error) {
-        console.error("Erro ao deletar conta:", error);
-        alert("Não foi possível conectar ao servidor.");
-      }
-    }
-
-    if (statusTutor === "INATIVO") {
-      limparSessaoTutor();
-      window.location.replace("./login-tutor.html");
-      return;
-    }
-
-    openProfileMenu?.addEventListener("click", abrirMenuPerfil);
-    closeProfileMenu?.addEventListener("click", fecharMenuPerfil);
-    profileSidebarOverlay?.addEventListener("click", fecharMenuPerfil);
-
-    editTutorBtn?.addEventListener("click", editarConta);
-    inactivateTutorBtn?.addEventListener("click", inativarConta);
-    deleteTutorBtn?.addEventListener("click", deletarConta);
-    logoutTutorBtn?.addEventListener("click", logoutTutor);
-
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
-        fecharMenuPerfil();
-      }
-    });
-
-    preencherDadosTutor();
-  } catch (error) {
-    console.error("Erro ao carregar dashboard do tutor:", error);
+  function limparSessaoTutor() {
     localStorage.removeItem("tokenTutor");
     localStorage.removeItem("tutorLogado");
     localStorage.removeItem("tutorDados");
     localStorage.removeItem("tutorReativado");
-    window.location.replace("./login-tutor.html");
   }
+
+  if (!tokenTutor || tutorLogado !== "true" || !tutorDados) {
+    limparSessaoTutor();
+    window.location.replace("./login-tutor.html");
+    return;
+  }
+
+  let tutor;
+
+  try {
+    tutor = JSON.parse(tutorDados);
+  } catch (error) {
+    console.error("Erro ao ler dados do tutor:", error);
+    limparSessaoTutor();
+    window.location.replace("./login-tutor.html");
+    return;
+  }
+
+  const tutorId = tutor.id || tutor.TUT_ID || null;
+  const nomeTutor = (tutor.nome || tutor.TUT_NOME || "Tutor").trim();
+  const statusTutor = tutor.status || tutor.TUT_STATUS || "ATIVO";
+  const primeiroNomeTutor = nomeTutor.split(" ")[0] || "Tutor";
+
+  if (!tutorId || statusTutor === "INATIVO") {
+    limparSessaoTutor();
+    window.location.replace("./login-tutor.html");
+    return;
+  }
+
+  function preencherBoasVindasTutor() {
+    if (!dashboardTutorNome) return;
+
+    if (tutorReativado) {
+      dashboardTutorNome.textContent = `Seja bem-vindo de volta, ${primeiroNomeTutor}! 👋`;
+      localStorage.removeItem("tutorReativado");
+      return;
+    }
+
+    dashboardTutorNome.textContent = `Olá, ${primeiroNomeTutor}! 👋`;
+  }
+
+  function irParaCadastroPet() {
+    window.location.href = "./cadastro-pet.html";
+  }
+
+  function irParaMeusPets() {
+    window.location.href = "./meus-pets.html";
+  }
+
+  async function carregarPets() {
+    if (!petsContainer) return;
+
+    try {
+      const response = await fetch(apiPetsUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${tokenTutor}`,
+        },
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (response.status === 401 || response.status === 403) {
+        console.warn("Sessão inválida ou expirada ao buscar pets.");
+        limparSessaoTutor();
+        window.location.replace("./login-tutor.html");
+        return;
+      }
+
+      if (!response.ok) {
+        console.error("Erro retornado pela API /pets:", data);
+        atualizarResumoPets([]);
+
+        petsContainer.innerHTML = `
+          <div class="empty-pets">
+            <div class="empty-pets-icon">🐶</div>
+            <h3>Não foi possível carregar seus pets</h3>
+            <p>
+              O servidor encontrou um problema ao buscar os pets.
+              Verifique o terminal do backend para identificar o erro real.
+            </p>
+            <button type="button" class="btn-primary" id="cadastrarPrimeiroPetDinamicoBtn">
+              Cadastrar pet
+            </button>
+          </div>
+        `;
+
+        document
+          .getElementById("cadastrarPrimeiroPetDinamicoBtn")
+          ?.addEventListener("click", irParaCadastroPet);
+
+        return;
+      }
+
+      const pets = Array.isArray(data) ? data : data.pets || [];
+
+      atualizarResumoPets(pets);
+      renderizarPets(pets);
+    } catch (error) {
+      console.error("Erro ao carregar pets:", error);
+      atualizarResumoPets([]);
+
+      petsContainer.innerHTML = `
+        <div class="empty-pets">
+          <div class="empty-pets-icon">🐶</div>
+          <h3>Não foi possível conectar ao servidor</h3>
+          <p>Verifique se o backend está rodando em http://localhost:3000.</p>
+        </div>
+      `;
+    }
+  }
+
+  function atualizarResumoPets(pets) {
+    if (!petsResumoTexto) return;
+
+    if (!pets || pets.length === 0) {
+      petsResumoTexto.textContent = "Você ainda não cadastrou nenhum pet";
+      return;
+    }
+
+    if (pets.length === 1) {
+      petsResumoTexto.textContent = "Você possui 1 pet cadastrado";
+      return;
+    }
+
+    petsResumoTexto.textContent = `Você possui ${pets.length} pets cadastrados`;
+  }
+
+  function renderizarPets(pets) {
+    if (!petsContainer) return;
+
+    if (!pets || pets.length === 0) {
+      petsContainer.innerHTML = `
+        <div class="empty-pets">
+          <div class="empty-pets-icon">🐶</div>
+          <h3>Nenhum pet cadastrado</h3>
+          <p>
+            Assim que você cadastrar seu primeiro pet, as informações aparecerão aqui no painel.
+          </p>
+          <button type="button" class="btn-primary" id="cadastrarPrimeiroPetDinamicoBtn">
+            Cadastrar primeiro pet
+          </button>
+        </div>
+      `;
+
+      document
+        .getElementById("cadastrarPrimeiroPetDinamicoBtn")
+        ?.addEventListener("click", irParaCadastroPet);
+
+      return;
+    }
+
+    petsContainer.innerHTML = pets
+      .map((pet) => {
+        const petId = pet.PET_ID || pet.id;
+        const petNome = pet.PET_NOME || pet.nome || "Pet sem nome";
+        const petEspecie =
+          pet.PET_ESPECIE || pet.especie || "Espécie não informada";
+        const petRaca = pet.PET_RACA || pet.raca || "Raça não informada";
+
+        return `
+          <article class="pet-card">
+            <div class="pet-card-icon">🐾</div>
+
+            <div class="pet-card-content">
+              <h3>${petNome}</h3>
+              <p>${petEspecie}</p>
+              <p>${petRaca}</p>
+            </div>
+
+            <div class="pet-card-actions">
+              <a href="./visualizar-pet.html?id=${petId}" class="btn-secondary">
+                Visualizar
+              </a>
+              <a href="./editar-pet.html?id=${petId}" class="btn-secondary">
+                Editar
+              </a>
+            </div>
+          </article>
+        `;
+      })
+      .join("");
+  }
+
+  cadastrarPetBtn?.addEventListener("click", irParaCadastroPet);
+  cadastrarPrimeiroPetBtn?.addEventListener("click", irParaCadastroPet);
+  verTodosPetsBtn?.addEventListener("click", irParaMeusPets);
+
+  preencherBoasVindasTutor();
+  carregarPets();
 });

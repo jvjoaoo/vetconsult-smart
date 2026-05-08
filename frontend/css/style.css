@@ -10,12 +10,14 @@
 @import "./components/forms.css";
 @import "./components/tables.css";
 @import "./components/footer.css";
+@import "./components/menu-tutor.css";
 
 /* PAGES */
 @import "./pages/global.css";
 @import "./pages/login-admin.css";
 @import "./pages/dashboard-tutor.css";
 @import "./pages/dashboard-admin.css";
+@import "./pages/meus-pets.css";
 
 /*
 @import "./pages/admin-usuarios.css";

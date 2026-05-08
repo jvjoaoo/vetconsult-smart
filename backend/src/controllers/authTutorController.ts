@@ -52,7 +52,7 @@ export async function loginTutor(req: Request, res: Response) {
       {
         id: tutor.TUT_ID,
         email: tutor.TUT_EMAIL,
-        tipo: "tutor",
+        perfil: "tutor",
       },
       process.env.JWT_SECRET as string,
       { expiresIn: "8h" }
