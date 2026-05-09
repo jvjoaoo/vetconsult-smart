@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Meus Pets | VetConsult Smart</title>
+    <title>Visualizar Pet | VetConsult Smart</title>
 
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="icon" type="image/x-icon" href="../assets/icon-logo.svg" />
@@ -33,11 +33,13 @@
         </button>
       </div>
     </header>
+
     <div
       class="profile-sidebar-overlay"
       id="profileSidebarOverlay"
       aria-hidden="true"
     ></div>
+
     <aside
       class="profile-sidebar"
       id="profileSidebar"
@@ -117,21 +119,23 @@
 
     <main>
       <section class="container">
-        <div class="header-actions">
-          <div>
-            <h1>Meus Pets</h1>
-            <p id="petsResumoTexto">Carregando pets...</p>
+        <div class="header-actions pet-view-header-actions">
+          <div></div>
+
+          <div class="header-buttons">
+            <a href="./dashboard-tutor.html" class="section-link">
+              Voltar ao painel
+            </a>
+
+            <a href="#" class="btn-primary" id="editarPetBtn">Editar pet</a>
           </div>
-          <a href="./dashboard-tutor.html" class="section-link"
-            >Voltar ao painel</a
-          >
         </div>
 
-        <div id="petsContainer" class="pets-list">
+        <div class="pet-profile-card" id="petDetalhesContainer">
           <div class="empty-pets">
             <div class="empty-pets-icon">🐾</div>
             <h3>Carregando...</h3>
-            <p>Estamos buscando os pets cadastrados.</p>
+            <p>Estamos buscando as informações do pet.</p>
           </div>
         </div>
       </section>
@@ -168,7 +172,8 @@
         </div>
       </div>
     </footer>
+
     <script src="../js/pages/tutor-menu.js"></script>
-    <script src="../js/pages/meus-pets.js"></script>
+    <script src="../js/pages/visualizar-pet.js"></script>
   </body>
 </html>

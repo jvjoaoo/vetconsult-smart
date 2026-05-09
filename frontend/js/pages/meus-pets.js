@@ -125,7 +125,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 Editar
               </a>
 
-              <button type="button" class="btn-danger" data-pet-id="${petId}">
+              <button
+              type="button"
+              class="btn-danger pet-delete-btn"
+              data-pet-id="${petId}"
+              >
                 Excluir
               </button>
             </div>
@@ -134,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .join("");
 
-    const botoesExcluir = document.querySelectorAll(".btn-danger[data-pet-id]");
+    const botoesExcluir = document.querySelectorAll(".pet-delete-btn");
 
     botoesExcluir.forEach((botao) => {
       botao.addEventListener("click", () => {
