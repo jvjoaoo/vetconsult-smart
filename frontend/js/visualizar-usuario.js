@@ -7,6 +7,12 @@ function obterIdDaUrl() {
 
 async function carregarUsuario() {
   const id = obterIdDaUrl();
+  const tokenAdmin = localStorage.getItem("tokenAdmin");
+
+  if (!tokenAdmin) {
+    window.location.href = "./login-admin.html";
+    return;
+  }
 
   if (!id) {
     alert("ID do usuário não informado.");
@@ -15,7 +21,23 @@ async function carregarUsuario() {
   }
 
   try {
-    const response = await fetch(`${apiUrl}/${id}`);
+    const response = await fetch(`${apiUrl}/${id}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${tokenAdmin}`,
+      },
+    });
+
+    if (response.status === 401 || response.status === 403) {
+      alert("Sessão expirada. Faça login novamente.");
+
+      localStorage.removeItem("tokenAdmin");
+      localStorage.removeItem("adminLogado");
+      localStorage.removeItem("adminDados");
+
+      window.location.href = "./login-admin.html";
+      return;
+    }
 
     if (!response.ok) {
       throw new Error("Usuário não encontrado");

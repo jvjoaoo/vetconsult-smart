@@ -73,22 +73,24 @@ function alternarModo(event) {
    Sessão tutor
 ========================= */
 function salvarSessaoTutor(data) {
-  const tutor = data?.tutor || {};
+  const tutor = data?.tutor || data?.usuario || data || {};
 
-  const tutorId = tutor.TUT_ID || tutor.id || null;
-  const tutorNome = tutor.TUT_NOME || tutor.nome || "";
-  const tutorEmail = tutor.TUT_EMAIL || tutor.email || "";
-  const tutorStatus = tutor.TUT_STATUS || tutor.status || "ATIVO";
-  const token = data?.token || "";
+  const tutorId = tutor.TUT_ID || tutor.id || data?.id || null;
+  const tutorNome = tutor.TUT_NOME || tutor.nome || data?.nome || "";
+  const tutorEmail = tutor.TUT_EMAIL || tutor.email || data?.email || "";
+  const tutorStatus =
+    tutor.TUT_STATUS || tutor.status || data?.status || "ATIVO";
+  const token = data?.token || data?.tokenTutor || "";
 
-  if (!tutorId) {
-    throw new Error(
-      "Não foi possível identificar o tutor para salvar a sessão.",
-    );
+  if (!token || !tutorId) {
+    console.error("Dados recebidos no login:", data);
+
+    throw new Error("Dados insuficientes para salvar a sessão do tutor.");
   }
 
   localStorage.setItem("tokenTutor", token);
   localStorage.setItem("tutorLogado", "true");
+
   localStorage.setItem(
     "tutorDados",
     JSON.stringify({
@@ -104,7 +106,7 @@ function limparSessaoTutor() {
   localStorage.removeItem("tokenTutor");
   localStorage.removeItem("tutorLogado");
   localStorage.removeItem("tutorDados");
-  localStorage.removeItem("tutorReativado");
+  localStorage.removeItem("tutorReativadoAgora");
 }
 
 /* =========================
@@ -276,17 +278,26 @@ loginForm?.addEventListener("submit", async (event) => {
 
       await reativarContaTutor(tutorId, tokenTemporario);
 
-      salvarSessaoTutor({
-        token: tokenTemporario,
-        tutor: {
-          TUT_ID: tutorId,
-          TUT_NOME: tutor.TUT_NOME || tutor.nome || "",
-          TUT_EMAIL: tutor.TUT_EMAIL || tutor.email || "",
-          TUT_STATUS: "ATIVO",
+      const responseLoginAposReativacao = await fetch(loginApiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify(payload),
       });
 
-      localStorage.setItem("tutorReativado", "true");
+      const dataLoginAposReativacao = await responseLoginAposReativacao.json();
+
+      if (!responseLoginAposReativacao.ok) {
+        throw new Error(
+          dataLoginAposReativacao.message ||
+            "Conta reativada, mas não foi possível fazer login automático.",
+        );
+      }
+
+      salvarSessaoTutor(dataLoginAposReativacao);
+
+      localStorage.setItem("tutorReativadoAgora", "true");
 
       exibirMensagemLogin(
         "Conta reativada com sucesso. Entrando no sistema...",
@@ -298,7 +309,7 @@ loginForm?.addEventListener("submit", async (event) => {
     }
 
     salvarSessaoTutor(data);
-    localStorage.removeItem("tutorReativado");
+    localStorage.removeItem("tutorReativadoAgora");
 
     exibirMensagemLogin("Login realizado com sucesso.", "green");
 

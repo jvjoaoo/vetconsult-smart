@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const tokenTutor = localStorage.getItem("tokenTutor");
   const tutorLogado = localStorage.getItem("tutorLogado");
   const tutorDados = localStorage.getItem("tutorDados");
-  const tutorReativado = localStorage.getItem("tutorReativado") === "true";
+  const tutorReativadoAgora = localStorage.getItem("tutorReativadoAgora") === "true";
 
   const dashboardTutorNome = document.getElementById("dashboardTutorNome");
   const cadastrarPetBtn = document.getElementById("cadastrarPetBtn");
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.removeItem("tokenTutor");
     localStorage.removeItem("tutorLogado");
     localStorage.removeItem("tutorDados");
-    localStorage.removeItem("tutorReativado");
+    localStorage.removeItem("tutorReativadoAgora");
   }
 
   if (!tokenTutor || tutorLogado !== "true" || !tutorDados) {
@@ -55,9 +55,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function preencherBoasVindasTutor() {
     if (!dashboardTutorNome) return;
 
-    if (tutorReativado) {
+    if (tutorReativadoAgora) {
       dashboardTutorNome.textContent = `Seja bem-vindo de volta, ${primeiroNomeTutor}! 👋`;
-      localStorage.removeItem("tutorReativado");
+      localStorage.removeItem("tutorReativadoAgora");
       return;
     }
 
