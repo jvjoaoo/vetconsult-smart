@@ -2,11 +2,13 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelector('[data-page="dashboard"]')?.classList.add("active");
 
   const apiPetsUrl = "http://localhost:3000/pets";
+  const LIMITE_PETS_DASHBOARD = 4;
 
   const tokenTutor = localStorage.getItem("tokenTutor");
   const tutorLogado = localStorage.getItem("tutorLogado");
   const tutorDados = localStorage.getItem("tutorDados");
-  const tutorReativadoAgora = localStorage.getItem("tutorReativadoAgora") === "true";
+  const tutorReativadoAgora =
+    localStorage.getItem("tutorReativadoAgora") === "true";
 
   const dashboardTutorNome = document.getElementById("dashboardTutorNome");
   const cadastrarPetBtn = document.getElementById("cadastrarPetBtn");
@@ -68,7 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = "./cadastro-pet.html";
   }
 
-  function irParaMeusPets() {
+  function irParaMeusPets(event) {
+    event?.preventDefault();
     window.location.href = "./meus-pets.html";
   }
 
@@ -95,16 +98,21 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!response.ok) {
         console.error("Erro retornado pela API /pets:", data);
         atualizarResumoPets([]);
+        atualizarBotaoVerTodos(0);
 
         petsContainer.innerHTML = `
-          <div class="empty-pets">
-            <div class="empty-pets-icon">🐶</div>
+          <div class="empty-state">
+            <div class="empty-state-icon">🐶</div>
             <h3>Não foi possível carregar seus pets</h3>
             <p>
               O servidor encontrou um problema ao buscar os pets.
               Verifique o terminal do backend para identificar o erro real.
             </p>
-            <button type="button" class="btn-primary" id="cadastrarPrimeiroPetDinamicoBtn">
+            <button
+              type="button"
+              class="btn-primary"
+              id="cadastrarPrimeiroPetDinamicoBtn"
+            >
               Cadastrar pet
             </button>
           </div>
@@ -120,14 +128,16 @@ document.addEventListener("DOMContentLoaded", () => {
       const pets = Array.isArray(data) ? data : data.pets || [];
 
       atualizarResumoPets(pets);
+      atualizarBotaoVerTodos(pets.length);
       renderizarPets(pets);
     } catch (error) {
       console.error("Erro ao carregar pets:", error);
       atualizarResumoPets([]);
+      atualizarBotaoVerTodos(0);
 
       petsContainer.innerHTML = `
-        <div class="empty-pets">
-          <div class="empty-pets-icon">🐶</div>
+        <div class="empty-state">
+          <div class="empty-state-icon">🐶</div>
           <h3>Não foi possível conectar ao servidor</h3>
           <p>Verifique se o backend está rodando em http://localhost:3000.</p>
         </div>
@@ -151,18 +161,33 @@ document.addEventListener("DOMContentLoaded", () => {
     petsResumoTexto.textContent = `Você possui ${pets.length} pets cadastrados`;
   }
 
+  function atualizarBotaoVerTodos(totalPets) {
+    if (!verTodosPetsBtn) return;
+
+    const quantidadeOculta =
+      totalPets > LIMITE_PETS_DASHBOARD ? totalPets - LIMITE_PETS_DASHBOARD : 0;
+
+    verTodosPetsBtn.textContent =
+      quantidadeOculta > 0 ? `Ver todos +${quantidadeOculta}` : "Ver todos";
+  }
+
   function renderizarPets(pets) {
     if (!petsContainer) return;
 
     if (!pets || pets.length === 0) {
       petsContainer.innerHTML = `
-        <div class="empty-pets">
-          <div class="empty-pets-icon">🐶</div>
+        <div class="empty-state">
+          <div class="empty-state-icon">🐶</div>
           <h3>Nenhum pet cadastrado</h3>
           <p>
-            Assim que você cadastrar seu primeiro pet, as informações aparecerão aqui no painel.
+            Assim que você cadastrar seu primeiro pet,
+            as informações aparecerão aqui no painel.
           </p>
-          <button type="button" class="btn-primary" id="cadastrarPrimeiroPetDinamicoBtn">
+          <button
+            type="button"
+            class="btn-primary"
+            id="cadastrarPrimeiroPetDinamicoBtn"
+          >
             Cadastrar primeiro pet
           </button>
         </div>
@@ -175,7 +200,9 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    petsContainer.innerHTML = pets
+    const petsVisiveis = pets.slice(0, LIMITE_PETS_DASHBOARD);
+
+    petsContainer.innerHTML = petsVisiveis
       .map((pet) => {
         const petId = pet.PET_ID || pet.id;
         const petNome = pet.PET_NOME || pet.nome || "Pet sem nome";
@@ -184,20 +211,43 @@ document.addEventListener("DOMContentLoaded", () => {
         const petRaca = pet.PET_RACA || pet.raca || "SRD";
 
         return `
-          <article class="pet-card">
-            <div class="pet-card-icon">🐾</div>
+          <article class="pet-dashboard-card">
+            <button
+              type="button"
+              class="pet-dashboard-delete"
+              data-id="${petId}"
+              title="Excluir pet"
+              aria-label="Excluir pet ${petNome}"
+            >
+              <img
+               src="../assets/excluir.svg"
+               alt="Excluir pet"
+               class="pet-dashboard-delete-icon"
+              />
+            </button>
 
-            <div class="pet-card-content">
+            <div class="pet-dashboard-photo">
+              🐾
+            </div>
+
+            <div class="pet-dashboard-info">
               <h3>${petNome}</h3>
               <p>${petEspecie}</p>
               <p>${petRaca}</p>
             </div>
 
-            <div class="pet-card-actions">
-              <a href="./visualizar-pet.html?id=${petId}" class="btn-secondary">
+            <div class="pet-dashboard-actions">
+              <a
+                href="./visualizar-pet.html?id=${petId}"
+                class="pet-dashboard-view"
+              >
                 Visualizar
               </a>
-              <a href="./editar-pet.html?id=${petId}" class="btn-secondary">
+
+              <a
+                href="./editar-pet.html?id=${petId}"
+                class="pet-dashboard-edit"
+              >
                 Editar
               </a>
             </div>
@@ -205,6 +255,28 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
       })
       .join("");
+
+    adicionarEventosExcluirPet();
+  }
+
+  function adicionarEventosExcluirPet() {
+    const botoesExcluir = document.querySelectorAll(".pet-dashboard-delete");
+
+    botoesExcluir.forEach((botao) => {
+      botao.addEventListener("click", () => {
+        const petId = botao.dataset.id;
+
+        const confirmar = confirm("Deseja realmente excluir este pet?");
+
+        if (!confirmar) return;
+
+        console.log("Excluir pet:", petId);
+
+        // Próxima etapa:
+        // implementar DELETE /pets/:id
+        // excluirPet(petId);
+      });
+    });
   }
 
   cadastrarPetBtn?.addEventListener("click", irParaCadastroPet);

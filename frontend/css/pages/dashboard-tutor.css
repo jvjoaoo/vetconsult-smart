@@ -379,6 +379,161 @@
   color: #0b1d18;
 }
 
+/* ==== DASHBOARD TUTOR - PETS ==== */
+
+.dashboard-pets-wrapper {
+  width: 100%;
+}
+
+.dashboard-pets-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+
+.pet-dashboard-card {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #dce9e5;
+  border-radius: 22px;
+  padding: 22px 18px;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: space-between;
+  transition: 0.2s ease;
+}
+
+.pet-dashboard-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(11, 29, 24, 0.08);
+}
+
+.pet-dashboard-delete {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.pet-dashboard-delete:hover {
+  transform: scale(1.08);
+  background: #ffe8e8;
+}
+
+.pet-dashboard-delete-icon {
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.pet-dashboard-photo {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: #eff9f6;
+  border: 2px solid #dce9e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin-top: 8px;
+}
+
+.pet-dashboard-info h3 {
+  margin: 14px 0 8px;
+  font-size: 1.25rem;
+  color: #0b1d18;
+}
+
+.pet-dashboard-info p {
+  margin: 4px 0;
+  font-size: 0.92rem;
+  color: #49635b;
+}
+
+.pet-dashboard-actions {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.pet-dashboard-actions a,
+.pet-dashboard-actions button {
+  min-width: 80px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+}
+
+.pet-dashboard-view {
+  background: #14d09b;
+  color: #ffffff;
+  border: 1px solid #14d09b;
+}
+
+.pet-dashboard-edit {
+  background: transparent;
+  color: #0b1d18;
+  border: 1px solid #14d09b;
+}
+
+.pet-dashboard-view:hover {
+  background: #0fb889;
+}
+
+.pet-dashboard-edit:hover {
+  background: #eff9f6;
+}
+
+/* ===== RESPONSIVO ===== */
+
+@media (max-width: 1100px) {
+  .dashboard-pets-grid {
+    grid-template-columns: repeat(3, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 820px) {
+  .dashboard-pets-grid {
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .dashboard-pets-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pet-dashboard-card {
+    min-height: 240px;
+  }
+
+  .pet-dashboard-actions {
+    flex-direction: column;
+  }
+
+  .pet-dashboard-actions a,
+  .pet-dashboard-actions button {
+    width: 100%;
+  }
+}
+
+
 @media (max-width: 768px) {
   .profile-form-grid {
     grid-template-columns: 1fr;
@@ -390,7 +545,7 @@
 }
 
 
-/* ===== RESPONSIVO ===== */
+
 
 @media (max-width: 1024px) {
   .summary-cards {
