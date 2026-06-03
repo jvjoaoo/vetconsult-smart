@@ -7,16 +7,24 @@ import { Router } from "express";
 import {
   getPets,
   getPetPorId,
+  getTotalPets,
   postPet,
   putPet,
-  deletePet
+  deletePet,
 } from "../controllers/petController";
 
-import { verificarTokenTutor } from "../middlewares/authMiddleware";
+import {
+  verificarTokenTutor,
+  verificarTokenAdmin,
+} from "../middlewares/authMiddleware";
 
 const router = Router();
 
-// == Listar pets ==
+// == Total de pets para dashboard admin ==
+// Importante: essa rota precisa vir antes de "/pets/:id"
+router.get("/pets/total", verificarTokenAdmin, getTotalPets);
+
+// == Listar pets do tutor logado ==
 router.get("/pets", verificarTokenTutor, getPets);
 
 // == Buscar pet por ID ==

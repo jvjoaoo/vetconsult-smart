@@ -27,6 +27,17 @@ export async function buscarPetPorId(id: number, tutorId: number) {
   return rows;
 }
 
+export async function contarTotalPets() {
+  const [rows] = await database.execute(
+    `
+    SELECT COUNT(*) AS total
+    FROM pets
+    `
+  );
+
+  return rows;
+}
+
 export async function criarPet(dadosPet: any) {
   const [result] = await database.execute(
     `

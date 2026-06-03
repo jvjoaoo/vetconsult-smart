@@ -5,6 +5,7 @@ import { ResultSetHeader } from "mysql2";
 import {
   listarPets,
   buscarPetPorId,
+  contarTotalPets,
   criarPet,
   atualizarPet,
   deletarPet,
@@ -56,7 +57,7 @@ export async function getPetPorId(req: AuthRequest, res: Response) {
       return;
     }
 
-    const pet = await buscarPetPorId(id, tutorId) as any[];
+    const pet = (await buscarPetPorId(id, tutorId)) as any[];
 
     if (pet.length === 0) {
       res.status(404).json({
@@ -69,6 +70,23 @@ export async function getPetPorId(req: AuthRequest, res: Response) {
   } catch (error) {
     res.status(500).json({
       message: "Erro ao buscar pet",
+      error,
+    });
+  }
+}
+
+export async function getTotalPets(req: AuthRequest, res: Response) {
+  try {
+    const resultado = (await contarTotalPets()) as any[];
+
+    const total = Number(resultado[0]?.total) || 0;
+
+    res.json({
+      total,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Erro ao buscar total de pets",
       error,
     });
   }
@@ -211,10 +229,7 @@ export async function deletePet(req: AuthRequest, res: Response) {
       return;
     }
 
-    const petDeletado = (await deletarPet(
-      id,
-      tutorId
-    )) as ResultSetHeader;
+    const petDeletado = (await deletarPet(id, tutorId)) as ResultSetHeader;
 
     if (petDeletado.affectedRows === 0) {
       res.status(404).json({

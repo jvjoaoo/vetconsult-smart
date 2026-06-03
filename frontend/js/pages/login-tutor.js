@@ -13,6 +13,7 @@ const registerForm = document.getElementById("registerTutorForm");
 
 const loginMessage = document.getElementById("loginMessage");
 const registerMessage = document.getElementById("registerMessage");
+const loginFeedback = document.getElementById("loginFeedback");
 
 const registerCpf = document.getElementById("registerCpf");
 const registerTelefone = document.getElementById("registerTelefone");
@@ -47,6 +48,8 @@ function abrirCadastro(event) {
   authBox.classList.remove("login-mode");
   authBox.classList.add("register-mode");
   atualizarPainelLateral();
+  limparMensagemLogin();
+  limparFeedbackLogin();
 }
 
 function abrirLogin(event) {
@@ -56,6 +59,7 @@ function abrirLogin(event) {
   authBox.classList.remove("register-mode");
   authBox.classList.add("login-mode");
   atualizarPainelLateral();
+  limparMensagemCadastro();
 }
 
 function alternarModo(event) {
@@ -134,6 +138,20 @@ function limparMensagemCadastro() {
   if (!registerMessage) return;
   registerMessage.textContent = "";
   registerMessage.style.color = "";
+}
+
+function exibirFeedbackLogin(texto, tipo = "success") {
+  if (!loginFeedback) return;
+
+  loginFeedback.textContent = texto;
+  loginFeedback.className = `auth-feedback ${tipo} show`;
+}
+
+function limparFeedbackLogin() {
+  if (!loginFeedback) return;
+
+  loginFeedback.textContent = "";
+  loginFeedback.className = "auth-feedback";
 }
 
 /* =========================
@@ -380,13 +398,13 @@ registerForm?.addEventListener("submit", async (event) => {
       return;
     }
 
-    exibirMensagemCadastro(
-      "Cadastro realizado com sucesso. Faça seu login.",
-      "green",
-    );
-
     registerForm.reset();
     abrirLogin();
+
+    exibirFeedbackLogin(
+      "Cadastro realizado com sucesso. Faça seu login.",
+      "success",
+    );
   } catch (error) {
     console.error("Erro no cadastro:", error);
     exibirMensagemCadastro("Não foi possível conectar ao servidor.", "red");

@@ -13,9 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     admin = JSON.parse(adminDados);
   } catch (error) {
-    localStorage.removeItem("tokenAdmin");
-    localStorage.removeItem("adminLogado");
-    localStorage.removeItem("adminDados");
+    limparSessaoAdmin();
     window.location.replace("./login-admin.html");
     return;
   }
@@ -34,16 +32,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (!confirmar) return;
 
-      localStorage.removeItem("tokenAdmin");
-      localStorage.removeItem("adminLogado");
-      localStorage.removeItem("adminDados");
-
+      limparSessaoAdmin();
       window.location.replace("./login-admin.html");
     });
   }
 
-   await carregarIndicadores(tokenAdmin);
+  await carregarIndicadores(tokenAdmin);
 });
+
+function limparSessaoAdmin() {
+  localStorage.removeItem("tokenAdmin");
+  localStorage.removeItem("adminLogado");
+  localStorage.removeItem("adminDados");
+}
 
 async function carregarIndicadores(tokenAdmin) {
   const totalAdminsEl = document.getElementById("totalAdmins");
@@ -56,7 +57,7 @@ async function carregarIndicadores(tokenAdmin) {
     Authorization: `Bearer ${tokenAdmin}`,
   };
 
-  async function buscarTotal(url) {
+  async function buscarTotal(url, encerrarSessaoSeNaoAutorizado = false) {
     try {
       const response = await fetch(url, {
         method: "GET",
@@ -64,20 +65,30 @@ async function carregarIndicadores(tokenAdmin) {
       });
 
       if (response.status === 401 || response.status === 403) {
-        localStorage.removeItem("tokenAdmin");
-        localStorage.removeItem("adminLogado");
-        localStorage.removeItem("adminDados");
+        console.warn(
+          `Sem permissão para buscar dados em ${url}. Status: ${response.status}`
+        );
 
-        alert("Sua sessão expirou ou você não tem permissão para acessar esta página.");
-        window.location.replace("./login-admin.html");
+        if (encerrarSessaoSeNaoAutorizado) {
+          limparSessaoAdmin();
+
+          alert(
+            "Sua sessão expirou ou você não tem permissão para acessar esta página."
+          );
+
+          window.location.replace("./login-admin.html");
+        }
+
         return 0;
       }
 
       if (response.status === 404) {
+        console.warn(`Rota não encontrada: ${url}`);
         return 0;
       }
 
       if (!response.ok) {
+        console.error(`Erro ao buscar dados em ${url}. Status: ${response.status}`);
         return 0;
       }
 
@@ -91,6 +102,10 @@ async function carregarIndicadores(tokenAdmin) {
         return data.total;
       }
 
+      if (typeof data.total === "string") {
+        return Number(data.total) || 0;
+      }
+
       return 0;
     } catch (error) {
       console.error(`Erro ao buscar total em ${url}:`, error);
@@ -98,10 +113,12 @@ async function carregarIndicadores(tokenAdmin) {
     }
   }
 
-  const totalAdmins = await buscarTotal("http://localhost:3000/usuarios_admin");
-  const totalTutores = await buscarTotal("http://localhost:3000/tutores");
+  const [totalAdmins, totalTutores, totalPets] = await Promise.all([
+    buscarTotal("http://localhost:3000/usuarios_admin", true),
+    buscarTotal("http://localhost:3000/tutores"),
+    buscarTotal("http://localhost:3000/pets/total"),
+  ]);
 
-  const totalPets = 0;
   const totalAgendamentos = 0;
 
   if (totalAdminsEl) totalAdminsEl.textContent = String(totalAdmins);
