@@ -26,6 +26,70 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.removeItem("tutorReativadoAgora");
   }
 
+  function normalizarTexto(texto) {
+    return String(texto || "")
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
+
+  function obterIconePet(especie) {
+    const especieNormalizada = normalizarTexto(especie);
+
+    switch (especieNormalizada) {
+      case "cao":
+      case "cachorro":
+      case "cachorra":
+      case "canino":
+      case "canina":
+        return "../assets/pet-dog.svg";
+
+      case "gato":
+      case "gata":
+      case "felino":
+      case "felina":
+        return "../assets/pet-cat.svg";
+
+      case "passaro":
+      case "passara":
+      case "ave":
+      case "aves":
+        return "../assets/pet-bird.svg";
+
+      default:
+        return "../assets/paw-icon.svg";
+    }
+  }
+
+  function obterAltIconePet(especie) {
+    const especieNormalizada = normalizarTexto(especie);
+
+    switch (especieNormalizada) {
+      case "cao":
+      case "cachorro":
+      case "cachorra":
+      case "canino":
+      case "canina":
+        return "Ícone de cachorro";
+
+      case "gato":
+      case "gata":
+      case "felino":
+      case "felina":
+        return "Ícone de gato";
+
+      case "passaro":
+      case "passara":
+      case "ave":
+      case "aves":
+        return "Ícone de pássaro";
+
+      default:
+        return "Ícone de pet";
+    }
+  }
+
   if (!tokenTutor || tutorLogado !== "true" || !tutorDados) {
     limparSessaoTutor();
     window.location.replace("./login-tutor.html");
@@ -192,6 +256,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const petEspecie =
           pet.PET_ESPECIE || pet.especie || "Espécie não informada";
         const petRaca = pet.PET_RACA || pet.raca || "SRD";
+        const petIcone = obterIconePet(petEspecie);
+        const petIconeAlt = obterAltIconePet(petEspecie);
 
         return `
           <article class="pet-dashboard-card">
@@ -210,7 +276,11 @@ document.addEventListener("DOMContentLoaded", () => {
             </button>
 
             <div class="pet-dashboard-photo">
-              🐾
+              <img
+                src="${petIcone}"
+                alt="${petIconeAlt}"
+                class="pet-dashboard-species-icon"
+              />
             </div>
 
             <div class="pet-dashboard-info">

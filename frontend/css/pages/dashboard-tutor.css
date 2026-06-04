@@ -162,6 +162,12 @@
   line-height: 1.5;
 }
 
+.pet-dashboard-species-icon {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+}
+
 /* ===== SEÇÕES ===== */
 
 .dashboard-section,
