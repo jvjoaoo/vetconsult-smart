@@ -12,6 +12,8 @@ import authRoutes from "./routes/authRoutes";
 import tutorRoutes from "./routes/tutorRoutes";
 import authTutorRoutes from "./routes/authTutorRoutes";
 import petRoutes from "./routes/petRoutes";
+import agendamentoRoutes from "./routes/agendamentoRoutes";
+import prontuarioRoutes from "./routes/prontuarioRoutes";
 
 dotenv.config();
 
@@ -29,11 +31,25 @@ app.use(authRoutes);
 app.use(usuarioRoutes);
 
 // ==== ROTAS DE USUÁRIOS TUTORES ====
+// Responsável pelo cadastro, listagem, atualização e exclusão de tutores
 app.use(tutorRoutes);
+
+// ==== ROTAS DE AUTENTICAÇÃO DOS TUTORES ====
+// Responsável pelo login dos tutores
 app.use(authTutorRoutes);
 
 // ==== ROTAS DE PETS ====
 // CRUD de pets vinculado ao tutor autenticado
 app.use(petRoutes);
+
+// ==== ROTAS DE AGENDAMENTOS ====
+// CRUD de agendamentos vinculado ao tutor autenticado
+// Permite criar, listar, atualizar e excluir agendamentos dos pets
+app.use(agendamentoRoutes);
+
+// ==== ROTAS DE PRONTUÁRIOS ====
+// CRUD de prontuários vinculado aos agendamentos, tutores e pets
+// Permite registrar informações clínicas após o atendimento
+app.use(prontuarioRoutes);
 
 export default app;
