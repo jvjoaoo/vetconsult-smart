@@ -1,0 +1,184 @@
+/* ==== CONSULTA AGENDAMENTO ==== */
+
+.consulta-page {
+  background: #eef4f2;
+  padding: 36px 32px 64px;
+}
+
+.consulta-container {
+  max-width: 980px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 36px 40px;
+  box-shadow: 0 12px 30px rgba(11, 29, 24, 0.08);
+}
+
+.consulta-header {
+  margin-bottom: 28px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.consulta-step {
+  display: inline-flex;
+  margin-bottom: 10px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #eff9f6;
+  color: #0b8f6a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.consulta-header h1 {
+  margin: 0 0 8px;
+  color: #0b1d18;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.consulta-header p {
+  margin: 0;
+  color: #4d625c;
+  font-size: 15px;
+}
+
+.consulta-pet-card {
+  margin-bottom: 30px;
+  padding: 22px 24px;
+  border: 1px solid #cfe2dc;
+  border-radius: 20px;
+  background: #f7fbfa;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.consulta-pet-icon {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: #eff9f6;
+  border: 2px solid #d4ebe4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.consulta-pet-icon img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  display: block;
+}
+
+.consulta-pet-card h2 {
+  margin: 0 0 6px;
+  color: #0b1d18;
+  font-size: 22px;
+}
+
+.consulta-pet-card p {
+  margin: 0;
+  color: #4d625c;
+  font-size: 14px;
+}
+
+.consulta-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  color: #0b1d18;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  border: 1px solid #d5e6e1;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #0b1d18;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.form-group input {
+  height: 48px;
+  padding: 0 16px;
+}
+
+.form-group textarea {
+  min-height: 118px;
+  padding: 14px 16px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #14d09b;
+  box-shadow: 0 0 0 3px rgba(20, 208, 155, 0.14);
+}
+
+.form-message {
+  min-height: 20px;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.consulta-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+@media (max-width: 720px) {
+  .consulta-container {
+    padding: 28px 22px;
+  }
+
+  .consulta-header {
+    flex-direction: column;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .consulta-pet-card {
+    align-items: flex-start;
+  }
+
+  .consulta-actions {
+    flex-direction: column-reverse;
+  }
+
+  .consulta-actions button,
+  .consulta-actions a {
+    width: 100%;
+  }
+}

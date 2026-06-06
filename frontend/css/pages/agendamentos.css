@@ -1,4 +1,4 @@
-/* ==== AGENDAMENTOS - AJUSTE VISUAL ==== */
+/* ==== AGENDAMENTOS  ==== */
 
 .tutor-main {
   background: #eef4f2;
@@ -61,6 +61,98 @@
   margin-top: 24px;
 }
 
+#agendamentosLista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 260px));
+  gap: 18px;
+  margin-top: 28px;
+}
+
+.agendamento-dashboard-card {
+  position: relative;
+  min-height: 280px;
+  background: #ffffff;
+  border: 1px solid #cfe2dc;
+  border-radius: 18px;
+  padding: 28px 22px 22px;
+  box-shadow: 0 10px 24px rgba(11, 29, 24, 0.06);
+  transition: 0.2s ease;
+}
+
+.agendamento-dashboard-card:hover {
+  transform: translateY(-3px);
+  border-color: #14d09b;
+}
+
+.agendamento-pet-icon {
+  width: 86px;
+  height: 86px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: #eff9f6;
+  border: 2px solid #d4ebe4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.agendamento-pet-svg {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  display: block;
+}
+
+.agendamento-pet-icon img {
+  max-width: 58px;
+  max-height: 58px;
+  object-fit: contain;
+  display: block;
+}
+
+.agendamento-dashboard-card h3 {
+  margin: 0 0 10px;
+  color: #0b1d18;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.agendamento-dashboard-card p {
+  margin: 3px 0;
+  color: #0b1d18;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.agendamento-delete {
+  position: absolute;
+  top: 28px;
+  right: 28px;
+  width: 28px;
+  height: 28px;
+  padding: 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.agendamento-delete:hover {
+  transform: scale(1.08);
+  background: #ffe8e8;
+}
+
+.agendamento-delete-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  pointer-events: none;
+  display: block;
+}
+
 /* ==== MODAL AGENDAMENTO ==== */
 
 .modal-overlay {
@@ -69,11 +161,9 @@
   z-index: 9999;
   padding: 32px 18px;
   background: rgba(11, 29, 24, 0.55);
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   overflow-y: auto;
 }
 
@@ -92,9 +182,13 @@
   top: 0;
   right: 0;
 
-  min-width: 42px;
   width: 42px;
   height: 42px;
+  min-width: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   border: none;
   border-radius: 50%;
@@ -103,8 +197,7 @@
 
   font-size: 28px;
   font-weight: 600;
-  line-height: 42px;
-  text-align: center;
+  line-height: 1;
 
   cursor: pointer;
   transition: 0.2s ease;
@@ -138,16 +231,13 @@ body.modal-open {
   width: 100%;
   min-height: 118px;
   padding: 14px 16px;
-
   border: 1px solid #d5e6e1;
   border-radius: 14px;
   background: #ffffff;
-
   color: #0b1d18;
   font-family: "Poppins", sans-serif;
   font-size: 14px;
   line-height: 1.5;
-
   resize: vertical;
   outline: none;
   box-sizing: border-box;
@@ -160,4 +250,45 @@ body.modal-open {
 .form-group textarea:focus {
   border-color: #14d09b;
   box-shadow: 0 0 0 3px rgba(20, 208, 155, 0.14);
+}
+
+/* ==== CHECKBOX PETS ==== */
+
+.pet-check-card {
+  width: 100%;
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border: 1px solid #cfe2dc;
+  border-radius: 12px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.pet-check-card:hover {
+  border-color: #14d09b;
+  background: #eff9f6;
+}
+
+.pet-check-card.selected {
+  border-color: #14d09b;
+  background: #eff9f6;
+  box-shadow: 0 0 0 2px rgba(20, 208, 155, 0.14);
+}
+
+.pet-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #14d09b;
+  cursor: pointer;
+}
+
+.pet-check-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0b1d18;
 }

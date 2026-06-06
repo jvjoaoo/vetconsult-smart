@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Consulta | VetConsult Smart</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+  <body class="dashboard-page">
+    <!-- ==== MENU SUPERIOR DO TUTOR ==== -->
+    <header class="topbar tutor-topbar">
+      <div class="topbar-container tutor-topbar-container">
+        <a href="./dashboard-tutor.html" class="logo-text">
+          <img
+            src="../assets/vetconsultsmart_logo.svg"
+            alt="VetConsult Smart"
+            class="logo"
+          />
+        </a>
+
+        <nav class="menu tutor-menu">
+          <a href="./dashboard-tutor.html" data-page="dashboard">Painel</a>
+          <a href="./meus-pets.html" data-page="pets">Meus Pets</a>
+          <a href="agendamentos.html" data-page="agendamentos">Agendamentos</a>
+          <a href="./perfil-tutor.html" data-page="perfil">Meu Perfil</a>
+        </nav>
+
+        <button type="button" class="profile-menu-button" id="openProfileMenu">
+          <span class="profile-menu-avatar" id="topbarProfileAvatar">T</span>
+          <span class="profile-menu-name" id="topbarProfileName">Tutor</span>
+        </button>
+      </div>
+    </header>
+
+    <div
+      class="profile-sidebar-overlay"
+      id="profileSidebarOverlay"
+      aria-hidden="true"
+    ></div>
+
+    <aside
+      class="profile-sidebar"
+      id="profileSidebar"
+      aria-hidden="true"
+      aria-labelledby="profileSidebarTitle"
+    >
+      <div class="profile-sidebar-header">
+        <h2 id="profileSidebarTitle">Meu Perfil</h2>
+
+        <button
+          type="button"
+          class="profile-sidebar-close"
+          id="closeProfileMenu"
+          aria-label="Fechar menu de perfil"
+        >
+          ×
+        </button>
+      </div>
+
+      <div class="profile-sidebar-body">
+        <div class="profile-card">
+          <div class="profile-avatar" id="profileAvatar">T</div>
+
+          <div class="profile-info">
+            <h3 id="profileTutorNome">Tutor</h3>
+            <p id="profileTutorEmail">email@exemplo.com</p>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <h4>Informações da conta</h4>
+
+          <div class="profile-detail-item">
+            <span class="label">Nome</span>
+            <span class="value" id="profileTutorNomeInfo">-</span>
+          </div>
+
+          <div class="profile-detail-item">
+            <span class="label">E-mail</span>
+            <span class="value" id="profileTutorEmailInfo">-</span>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <h4>Ações</h4>
+
+          <button type="button" class="sidebar-action-btn" id="editTutorBtn">
+            Editar conta
+          </button>
+
+          <button
+            type="button"
+            class="sidebar-action-btn warning"
+            id="inactivateTutorBtn"
+          >
+            Inativar conta
+          </button>
+
+          <button
+            type="button"
+            class="sidebar-action-btn danger-outline"
+            id="deleteTutorBtn"
+          >
+            Deletar conta
+          </button>
+
+          <button
+            type="button"
+            class="sidebar-action-btn danger"
+            id="logoutTutorBtn"
+          >
+            Sair do sistema
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==== CONTEÚDO PRINCIPAL ==== -->
+
+    <main class="tutor-main consulta-page">
+      <section class="consulta-container">
+        <div class="consulta-header">
+          <div>
+            <span id="consultaEtapa" class="consulta-step"
+              >Consulta 1 de 1</span
+            >
+            <h1>Informações da consulta</h1>
+            <p>
+              Preencha os detalhes sobre o atendimento solicitado para o pet
+              selecionado.
+            </p>
+          </div>
+
+          <a href="./agendamentos.html" class="secondary-button"> Voltar </a>
+        </div>
+
+        <div class="consulta-pet-card">
+          <div class="consulta-pet-icon" id="consultaPetIcon"></div>
+
+          <div>
+            <h2 id="consultaPetNome">Pet selecionado</h2>
+            <p id="consultaPetResumo">Carregando informações do pet...</p>
+          </div>
+        </div>
+
+        <form id="formConsultaAgendamento" class="consulta-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="AGD_DATA">Data da consulta</label>
+              <input type="date" id="AGD_DATA" required />
+            </div>
+
+            <div class="form-group">
+              <label for="AGD_HORA">Horário</label>
+              <input type="time" id="AGD_HORA" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="AGD_SINTOMAS">Sintomas observados</label>
+            <textarea
+              id="AGD_SINTOMAS"
+              placeholder="Descreva os sintomas que o pet está apresentando"
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="AGD_TEMPO_SINTOMAS"
+              >Há quanto tempo os sintomas começaram?</label
+            >
+            <input
+              type="text"
+              id="AGD_TEMPO_SINTOMAS"
+              placeholder="Ex: 2 dias, 1 semana, desde ontem"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="AGD_MEDICAMENTOS">Medicamentos em uso</label>
+            <textarea
+              id="AGD_MEDICAMENTOS"
+              placeholder="Informe se o pet está usando algum medicamento"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="AGD_OBSERVACOES">Observações adicionais</label>
+            <textarea
+              id="AGD_OBSERVACOES"
+              placeholder="Informe detalhes adicionais, se necessário"
+            ></textarea>
+          </div>
+
+          <p id="mensagemConsulta" class="form-message"></p>
+
+          <div class="consulta-actions">
+            <button
+              type="button"
+              class="secondary-button"
+              id="btnCancelarConsulta"
+            >
+              Cancelar
+            </button>
+
+            <button type="submit" class="primary-button" id="btnSalvarConsulta">
+              Próximo pet
+            </button>
+          </div>
+        </form>
+      </section>
+    </main>
+    <footer class="footer">
+      <div class="footer-container">
+        <!-- Logo -->
+        <div class="footer-logo">
+          <img
+            src="../assets/vetconsultsmart_logo.svg"
+            alt="VetConsult Smart"
+            class="logo"
+          />
+        </div>
+
+        <!-- Redes sociais -->
+        <div class="footer-social">
+          <a href="#" class="social-icon"></a>
+          <a href="#" class="social-icon"></a>
+          <a href="#" class="social-icon"></a>
+        </div>
+
+        <!-- Links -->
+        <div class="footer-links">
+          <a href="#">FAQ</a>
+          <a href="#">CONTATO</a>
+          <a href="#">LOREM</a>
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-copy">
+          © 2026 Vetconsult Smart. Todos os direitos reservados.
+        </div>
+      </div>
+    </footer>
+    <script src="../js/pages/tutor-menu.js"></script>
+    <script src="../js/pages/consulta-agendamento.js"></script>
+  </body>
+</html>
