@@ -26,11 +26,14 @@ export async function listarAgendamentos(tutorId: number) {
       a.AGD_AGENDAMENTO_REFERENCIA_ID,
       a.AGD_STATUS,
       a.AGD_OBSERVACOES,
+      a.AGD_CANCELADO_EM,
+      a.AGD_MOTIVO_CANCELAMENTO,
       a.AGD_CREATED_AT,
       a.AGD_UPDATED_AT
     FROM agendamentos a
     INNER JOIN pets p ON a.PET_ID = p.PET_ID
     WHERE a.TUT_ID = ?
+    AND a.AGD_STATUS = 'AGENDADO'
     ORDER BY a.AGD_DATA ASC, a.AGD_HORA ASC
     `,
     [tutorId]
@@ -68,6 +71,8 @@ export async function buscarAgendamentoPorId(
       a.AGD_AGENDAMENTO_REFERENCIA_ID,
       a.AGD_STATUS,
       a.AGD_OBSERVACOES,
+      a.AGD_CANCELADO_EM,
+      a.AGD_MOTIVO_CANCELAMENTO,
       a.AGD_CREATED_AT,
       a.AGD_UPDATED_AT
     FROM agendamentos a
@@ -141,6 +146,8 @@ export async function criarAgendamento(dados: any) {
       AGD_AGENDAMENTO_REFERENCIA_ID || null,
     AGD_STATUS: "AGENDADO",
     AGD_OBSERVACOES: AGD_OBSERVACOES || null,
+    AGD_CANCELADO_EM: null,
+    AGD_MOTIVO_CANCELAMENTO: null,
   };
 }
 
@@ -160,7 +167,6 @@ export async function atualizarAgendamento(
     AGD_VACINA,
     AGD_EXAME,
     AGD_AGENDAMENTO_REFERENCIA_ID,
-    AGD_STATUS,
     AGD_OBSERVACOES,
   } = dados;
 
@@ -176,10 +182,10 @@ export async function atualizarAgendamento(
       AGD_VACINA = ?,
       AGD_EXAME = ?,
       AGD_AGENDAMENTO_REFERENCIA_ID = ?,
-      AGD_STATUS = ?,
       AGD_OBSERVACOES = ?
     WHERE AGD_ID = ?
       AND TUT_ID = ?
+      AND AGD_STATUS <> 'CANCELADO'
     `,
     [
       PET_ID,
@@ -190,7 +196,6 @@ export async function atualizarAgendamento(
       AGD_VACINA || null,
       AGD_EXAME || null,
       AGD_AGENDAMENTO_REFERENCIA_ID || null,
-      AGD_STATUS || "AGENDADO",
       AGD_OBSERVACOES || null,
       agendamentoId,
       tutorId,
@@ -200,17 +205,68 @@ export async function atualizarAgendamento(
   return result.affectedRows > 0;
 }
 
+// ==== CANCELAR AGENDAMENTO ====
+// Cancela um agendamento do tutor autenticado sem excluir o histórico
+export async function cancelarAgendamento(
+  agendamentoId: number,
+  tutorId: number,
+  motivoCancelamento?: string | null
+) {
+  const [result]: any = await database.query(
+    `
+    UPDATE agendamentos
+    SET 
+      AGD_STATUS = 'CANCELADO',
+      AGD_CANCELADO_EM = NOW(),
+      AGD_MOTIVO_CANCELAMENTO = ?
+    WHERE AGD_ID = ?
+      AND TUT_ID = ?
+      AND AGD_STATUS <> 'CANCELADO'
+    `,
+    [motivoCancelamento || null, agendamentoId, tutorId]
+  );
+
+  return result.affectedRows > 0;
+}
+
+// ==== CONCLUIR AGENDAMENTO ====
+// Marca um agendamento como concluído
+export async function concluirAgendamento(
+  agendamentoId: number,
+  tutorId: number
+) {
+  const [result]: any = await database.query(
+    `
+    UPDATE agendamentos
+    SET 
+      AGD_STATUS = 'CONCLUIDO'
+    WHERE AGD_ID = ?
+      AND TUT_ID = ?
+      AND AGD_STATUS = 'AGENDADO'
+    `,
+    [agendamentoId, tutorId]
+  );
+
+  return result.affectedRows > 0;
+}
+
 // ==== EXCLUIR AGENDAMENTO ====
-// Exclui um agendamento do tutor autenticado
+// Mantido apenas para uso administrativo futuro.
+// No fluxo normal do tutor, use cancelarAgendamento().
 export async function excluirAgendamento(
   agendamentoId: number,
   tutorId: number
 ) {
   const [result]: any = await database.query(
     `
-    DELETE FROM agendamentos
+    UPDATE agendamentos
+    SET 
+      AGD_STATUS = 'CANCELADO',
+      AGD_CANCELADO_EM = NOW(),
+      AGD_MOTIVO_CANCELAMENTO = 'Cancelado pelo tutor'
     WHERE AGD_ID = ?
       AND TUT_ID = ?
+      AND AGD_STATUS <> 'CANCELADO'
     `,
     [agendamentoId, tutorId]
   );
