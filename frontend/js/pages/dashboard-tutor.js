@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelector('[data-page="dashboard"]')?.classList.add("active");
 
   const apiPetsUrl = "http://localhost:3000/pets";
+  const apiAgendamentosUrl = "http://localhost:3000/agendamentos";
   const LIMITE_PETS_DASHBOARD = 4;
 
   const tokenTutor = localStorage.getItem("tokenTutor");
@@ -13,11 +14,28 @@ document.addEventListener("DOMContentLoaded", () => {
   const dashboardTutorNome = document.getElementById("dashboardTutorNome");
   const cadastrarPetBtn = document.getElementById("cadastrarPetBtn");
   const cadastrarPrimeiroPetBtn = document.getElementById(
-    "cadastrarPrimeiroPetBtn",
+    "cadastrarPrimeiroPetBtn"
   );
   const verTodosPetsBtn = document.getElementById("verTodosPetsBtn");
   const petsResumoTexto = document.getElementById("petsResumoTexto");
+  const proximaConsultaResumoTexto = document.getElementById(
+    "proximaConsultaResumoTexto"
+  );
+  const vacinasPendentesResumoTexto = document.getElementById(
+    "vacinasPendentesResumoTexto"
+  );
+  const historicoResumoTexto = document.getElementById("historicoResumoTexto");
   const petsContainer = document.getElementById("petsContainer");
+
+  const proximosAgendamentosContainer = document.getElementById(
+    "proximosAgendamentosContainer"
+  );
+  const lembretesAlertasContainer = document.getElementById(
+    "lembretesAlertasContainer"
+  );
+  const historicoRecenteContainer = document.getElementById(
+    "historicoRecenteContainer"
+  );
 
   function limparSessaoTutor() {
     localStorage.removeItem("tokenTutor");
@@ -194,6 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       alert("Pet excluído com sucesso.");
       carregarPets();
+      carregarAgendamentosResumo();
     } catch (error) {
       console.error("Erro ao excluir pet:", error);
       alert("Não foi possível conectar ao servidor.");
@@ -208,7 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const petId = botao.dataset.id;
 
         const confirmar = confirm(
-          "Deseja realmente excluir este pet? Esta ação não poderá ser desfeita.",
+          "Deseja realmente excluir este pet? Esta ação não poderá ser desfeita."
         );
 
         if (!confirmar) return;
@@ -382,10 +401,344 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  async function carregarAgendamentosResumo() {
+    try {
+      const response = await fetch(apiAgendamentosUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${tokenTutor}`,
+        },
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (response.status === 401 || response.status === 403) {
+        limparSessaoTutor();
+        window.location.replace("./login-tutor.html");
+        return;
+      }
+
+      if (!response.ok) {
+        console.error("Erro retornado pela API /agendamentos:", data);
+        atualizarCardsAgendamentos([]);
+        atualizarSecoesAgendamentos([]);
+        return;
+      }
+
+      const agendamentos = Array.isArray(data)
+        ? data
+        : data.agendamentos || data.data || [];
+
+      atualizarCardsAgendamentos(agendamentos);
+      atualizarSecoesAgendamentos(agendamentos);
+    } catch (error) {
+      console.error("Erro ao carregar resumo de agendamentos:", error);
+      atualizarCardsAgendamentos([]);
+      atualizarSecoesAgendamentos([]);
+    }
+  }
+
+  function atualizarCardsAgendamentos(agendamentos) {
+    atualizarCardProximaConsulta(agendamentos);
+    atualizarCardVacinasPendentes(agendamentos);
+    atualizarCardHistorico(agendamentos);
+  }
+
+  function atualizarCardProximaConsulta(agendamentos) {
+    if (!proximaConsultaResumoTexto) return;
+
+    const consultasFuturas = filtrarAgendamentosFuturos(agendamentos)
+      .filter((agendamento) => normalizarTexto(agendamento.AGD_TIPO) === "consulta")
+      .sort(ordenarPorDataAsc);
+
+    if (!consultasFuturas.length) {
+      proximaConsultaResumoTexto.textContent = "Nenhuma consulta agendada";
+      return;
+    }
+
+    const proximaConsulta = consultasFuturas[0];
+    const nomePet = proximaConsulta.PET_NOME || "Pet";
+    const data = formatarData(proximaConsulta.AGD_DATA);
+    const hora = formatarHora(proximaConsulta.AGD_HORA);
+
+    proximaConsultaResumoTexto.textContent = `${nomePet} - ${data} às ${hora}`;
+  }
+
+  function atualizarCardVacinasPendentes(agendamentos) {
+    if (!vacinasPendentesResumoTexto) return;
+
+    const vacinasFuturas = filtrarAgendamentosFuturos(agendamentos)
+      .filter((agendamento) => normalizarTexto(agendamento.AGD_TIPO) === "vacina")
+      .sort(ordenarPorDataAsc);
+
+    if (!vacinasFuturas.length) {
+      vacinasPendentesResumoTexto.textContent = "Nenhuma vacina pendente";
+      return;
+    }
+
+    const proximaVacina = vacinasFuturas[0];
+    const nomePet = proximaVacina.PET_NOME || "Pet";
+    const vacina = proximaVacina.AGD_VACINA || "Vacina";
+    const data = formatarData(proximaVacina.AGD_DATA);
+
+    vacinasPendentesResumoTexto.textContent = `${nomePet} - ${vacina} em ${data}`;
+  }
+
+  function atualizarCardHistorico(agendamentos) {
+    if (!historicoResumoTexto) return;
+
+    const agendamentosValidos = filtrarAgendamentosValidos(agendamentos).sort(
+      ordenarPorDataDesc
+    );
+
+    if (!agendamentosValidos.length) {
+      historicoResumoTexto.textContent = "Nenhum atendimento registrado";
+      return;
+    }
+
+    const ultimoAgendamento = agendamentosValidos[0];
+    const tipo = formatarTipoAgendamento(ultimoAgendamento.AGD_TIPO);
+    const nomePet = ultimoAgendamento.PET_NOME || "Pet";
+    const data = formatarData(ultimoAgendamento.AGD_DATA);
+
+    historicoResumoTexto.textContent = `${tipo} - ${nomePet} em ${data}`;
+  }
+
+  function atualizarSecoesAgendamentos(agendamentos) {
+    renderizarProximosAgendamentos(agendamentos);
+    renderizarLembretesAlertas(agendamentos);
+    renderizarHistoricoRecente(agendamentos);
+  }
+
+  function renderizarProximosAgendamentos(agendamentos) {
+    if (!proximosAgendamentosContainer) return;
+
+    const proximosAgendamentos = filtrarAgendamentosFuturos(agendamentos)
+      .sort(ordenarPorDataAsc)
+      .slice(0, 3);
+
+    if (!proximosAgendamentos.length) {
+      proximosAgendamentosContainer.innerHTML = `
+        <div class="empty-state empty-state-small">
+          <div class="empty-state-icon">📅</div>
+          <h3>Nenhum agendamento encontrado</h3>
+          <p>
+            Quando houver uma consulta marcada, ela será exibida nesta área.
+          </p>
+        </div>
+      `;
+      return;
+    }
+
+    proximosAgendamentosContainer.innerHTML = `
+      <div class="dashboard-agendamentos-list">
+        ${proximosAgendamentos.map(gerarItemAgendamento).join("")}
+      </div>
+    `;
+  }
+
+  function renderizarLembretesAlertas(agendamentos) {
+    if (!lembretesAlertasContainer) return;
+
+    const lembretes = filtrarAgendamentosFuturos(agendamentos)
+      .filter((agendamento) => {
+        const tipo = normalizarTexto(agendamento.AGD_TIPO);
+        return tipo === "vacina" || tipo === "retorno";
+      })
+      .sort(ordenarPorDataAsc)
+      .slice(0, 3);
+
+    if (!lembretes.length) {
+      lembretesAlertasContainer.innerHTML = `
+        <div class="empty-state empty-state-small">
+          <div class="empty-state-icon">🔔</div>
+          <h3>Sem lembretes no momento</h3>
+          <p>
+            Vacinas, retornos e outros avisos importantes aparecerão aqui.
+          </p>
+        </div>
+      `;
+      return;
+    }
+
+    lembretesAlertasContainer.innerHTML = `
+      <div class="dashboard-alertas-list">
+        ${lembretes.map(gerarItemAlerta).join("")}
+      </div>
+    `;
+  }
+
+  function renderizarHistoricoRecente(agendamentos) {
+    if (!historicoRecenteContainer) return;
+
+    const historico = filtrarAgendamentosValidos(agendamentos)
+      .sort(ordenarPorDataDesc)
+      .slice(0, 5);
+
+    if (!historico.length) {
+      historicoRecenteContainer.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">📋</div>
+          <h3>Nenhum atendimento registrado</h3>
+          <p>
+            O histórico de consultas e atendimentos realizados será mostrado aqui.
+          </p>
+        </div>
+      `;
+      return;
+    }
+
+    historicoRecenteContainer.innerHTML = `
+      <div class="dashboard-historico-list">
+        ${historico.map(gerarItemHistorico).join("")}
+      </div>
+    `;
+  }
+
+  function gerarItemAgendamento(agendamento) {
+    const tipo = formatarTipoAgendamento(agendamento.AGD_TIPO);
+    const nomePet = agendamento.PET_NOME || "Pet";
+    const data = formatarData(agendamento.AGD_DATA);
+    const hora = formatarHora(agendamento.AGD_HORA);
+
+    return `
+      <article class="dashboard-info-item">
+        <div>
+          <strong>${nomePet}</strong>
+          <span>${tipo}</span>
+        </div>
+        <p>${data} às ${hora}</p>
+      </article>
+    `;
+  }
+
+  function gerarItemAlerta(agendamento) {
+    const tipo = formatarTipoAgendamento(agendamento.AGD_TIPO);
+    const nomePet = agendamento.PET_NOME || "Pet";
+    const data = formatarData(agendamento.AGD_DATA);
+    const hora = formatarHora(agendamento.AGD_HORA);
+    const icone = normalizarTexto(agendamento.AGD_TIPO) === "vacina" ? "💉" : "🔄";
+
+    return `
+      <article class="dashboard-info-item">
+        <div>
+          <strong>${icone} ${tipo}</strong>
+          <span>${nomePet}</span>
+        </div>
+        <p>${data} às ${hora}</p>
+      </article>
+    `;
+  }
+
+  function gerarItemHistorico(agendamento) {
+    const tipo = formatarTipoAgendamento(agendamento.AGD_TIPO);
+    const nomePet = agendamento.PET_NOME || "Pet";
+    const data = formatarData(agendamento.AGD_DATA);
+    const status = agendamento.AGD_STATUS || "AGENDADO";
+
+    return `
+      <article class="dashboard-info-item">
+        <div>
+          <strong>${tipo} - ${nomePet}</strong>
+          <span>${status}</span>
+        </div>
+        <p>${data}</p>
+      </article>
+    `;
+  }
+
+  function filtrarAgendamentosValidos(agendamentos) {
+    return agendamentos.filter((agendamento) => {
+      const status = normalizarTexto(agendamento.AGD_STATUS || "AGENDADO");
+      const dataHora = obterDataHoraAgendamento(agendamento);
+
+      return status !== "cancelado" && dataHora;
+    });
+  }
+
+  function filtrarAgendamentosFuturos(agendamentos) {
+    const agora = new Date();
+
+    return filtrarAgendamentosValidos(agendamentos).filter((agendamento) => {
+      const dataHora = obterDataHoraAgendamento(agendamento);
+      return dataHora && dataHora >= agora;
+    });
+  }
+
+  function ordenarPorDataAsc(a, b) {
+    return (
+      obterDataHoraAgendamento(a).getTime() -
+      obterDataHoraAgendamento(b).getTime()
+    );
+  }
+
+  function ordenarPorDataDesc(a, b) {
+    return (
+      obterDataHoraAgendamento(b).getTime() -
+      obterDataHoraAgendamento(a).getTime()
+    );
+  }
+
+  function obterDataHoraAgendamento(agendamento) {
+    if (!agendamento?.AGD_DATA) return null;
+
+    const data = String(agendamento.AGD_DATA).slice(0, 10);
+    const hora = agendamento.AGD_HORA
+      ? String(agendamento.AGD_HORA).slice(0, 5)
+      : "00:00";
+
+    const dataHora = new Date(`${data}T${hora}:00`);
+
+    if (Number.isNaN(dataHora.getTime())) {
+      return null;
+    }
+
+    return dataHora;
+  }
+
+  function formatarData(data) {
+    if (!data) return "-";
+
+    const dataObj = new Date(data);
+
+    if (Number.isNaN(dataObj.getTime())) {
+      return data;
+    }
+
+    return dataObj.toLocaleDateString("pt-BR", {
+      timeZone: "UTC",
+    });
+  }
+
+  function formatarHora(hora) {
+    if (!hora) return "-";
+
+    return String(hora).slice(0, 5);
+  }
+
+  function formatarTipoAgendamento(tipo) {
+    const tipoNormalizado = normalizarTexto(tipo);
+
+    switch (tipoNormalizado) {
+      case "consulta":
+        return "Consulta";
+
+      case "vacina":
+        return "Vacina";
+
+      case "retorno":
+        return "Retorno";
+
+      default:
+        return tipo || "Agendamento";
+    }
+  }
+
   cadastrarPetBtn?.addEventListener("click", irParaCadastroPet);
   cadastrarPrimeiroPetBtn?.addEventListener("click", irParaCadastroPet);
   verTodosPetsBtn?.addEventListener("click", irParaMeusPets);
 
   preencherBoasVindasTutor();
   carregarPets();
+  carregarAgendamentosResumo();
 });

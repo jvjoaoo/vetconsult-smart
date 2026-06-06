@@ -22,7 +22,7 @@
         <nav class="menu tutor-menu">
           <a href="./dashboard-tutor.html" data-page="dashboard">Painel</a>
           <a href="./meus-pets.html" data-page="pets">Meus Pets</a>
-          <a href="agendamentos.html" data-page="agendamentos">Agendamentos</a>
+          <a href="./agendamentos.html" data-page="agendamentos">Agendamentos</a>
           <a href="./perfil-tutor.html" data-page="perfil">Meu Perfil</a>
         </nav>
 
@@ -156,7 +156,7 @@
           <div class="summary-icon">📅</div>
           <div class="summary-content">
             <h2>Próxima Consulta</h2>
-            <p>Nenhuma consulta agendada</p>
+            <p id="proximaConsultaResumoTexto">Nenhuma consulta agendada</p>
           </div>
         </article>
 
@@ -164,7 +164,7 @@
           <div class="summary-icon">💉</div>
           <div class="summary-content">
             <h2>Vacinas Pendentes</h2>
-            <p>Nenhum alerta no momento</p>
+            <p id="vacinasPendentesResumoTexto">Nenhum alerta no momento</p>
           </div>
         </article>
 
@@ -172,7 +172,7 @@
           <div class="summary-icon">📋</div>
           <div class="summary-content">
             <h2>Histórico</h2>
-            <p>Nenhum atendimento registrado</p>
+            <p id="historicoResumoTexto">Nenhum atendimento registrado</p>
           </div>
         </article>
       </section>
@@ -213,12 +213,17 @@
             <a href="./agendamentos.html" class="section-link">Ver agenda</a>
           </div>
 
-          <div class="empty-state empty-state-small">
-            <div class="empty-state-icon">📅</div>
-            <h3>Nenhum agendamento encontrado</h3>
-            <p>
-              Quando houver uma consulta marcada, ela será exibida nesta área.
-            </p>
+          <div
+            id="proximosAgendamentosContainer"
+            class="dashboard-panel-content"
+          >
+            <div class="empty-state empty-state-small">
+              <div class="empty-state-icon">📅</div>
+              <h3>Nenhum agendamento encontrado</h3>
+              <p>
+                Quando houver uma consulta marcada, ela será exibida nesta área.
+              </p>
+            </div>
           </div>
         </article>
 
@@ -227,12 +232,14 @@
             <h2>Lembretes e Alertas</h2>
           </div>
 
-          <div class="empty-state empty-state-small">
-            <div class="empty-state-icon">🔔</div>
-            <h3>Sem lembretes no momento</h3>
-            <p>
-              Vacinas, retornos e outros avisos importantes aparecerão aqui.
-            </p>
+          <div id="lembretesAlertasContainer" class="dashboard-panel-content">
+            <div class="empty-state empty-state-small">
+              <div class="empty-state-icon">🔔</div>
+              <h3>Sem lembretes no momento</h3>
+              <p>
+                Vacinas, retornos e outros avisos importantes aparecerão aqui.
+              </p>
+            </div>
           </div>
         </article>
       </section>
@@ -242,20 +249,21 @@
           <h2>Histórico Recente</h2>
         </div>
 
-        <div class="empty-state">
-          <div class="empty-state-icon">📋</div>
-          <h3>Nenhum atendimento registrado</h3>
-          <p>
-            O histórico de consultas e atendimentos realizados será mostrado
-            aqui.
-          </p>
+        <div id="historicoRecenteContainer">
+          <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <h3>Nenhum atendimento registrado</h3>
+            <p>
+              O histórico de consultas e atendimentos realizados será mostrado
+              aqui.
+            </p>
+          </div>
         </div>
       </section>
     </main>
 
     <footer class="footer">
       <div class="footer-container">
-        <!-- Logo -->
         <div class="footer-logo">
           <img
             src="../assets/vetconsultsmart_logo.svg"
@@ -264,26 +272,24 @@
           />
         </div>
 
-        <!-- Redes sociais -->
         <div class="footer-social">
           <a href="#" class="social-icon"></a>
           <a href="#" class="social-icon"></a>
           <a href="#" class="social-icon"></a>
         </div>
 
-        <!-- Links -->
         <div class="footer-links">
           <a href="#">FAQ</a>
           <a href="#">CONTATO</a>
           <a href="#">LOREM</a>
         </div>
 
-        <!-- Copyright -->
         <div class="footer-copy">
           © 2026 Vetconsult Smart. Todos os direitos reservados.
         </div>
       </div>
     </footer>
+
     <script src="../js/pages/tutor-menu.js"></script>
     <script src="../js/pages/dashboard-tutor.js"></script>
   </body>

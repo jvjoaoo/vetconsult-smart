@@ -5,10 +5,22 @@ import {
   criarAgendamento,
   atualizarAgendamento,
   excluirAgendamento,
+  contarAgendamentosAtivosAdmin,
 } from "../controllers/agendamentoController";
-import { verificarTokenTutor } from "../middlewares/authMiddleware";
+import {
+  verificarTokenTutor,
+  verificarTokenAdmin,
+} from "../middlewares/authMiddleware";
 
 const router = Router();
+
+// ==== ROTAS ADMIN ====
+// Conta todos os agendamentos ativos do sistema
+router.get(
+  "/agendamentos/admin/total-ativos",
+  verificarTokenAdmin,
+  contarAgendamentosAtivosAdmin
+);
 
 // ==== ROTAS DE AGENDAMENTOS ====
 // CRUD de agendamentos vinculado ao tutor autenticado

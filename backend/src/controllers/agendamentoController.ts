@@ -24,6 +24,23 @@ export const listarAgendamentos = async (
   }
 };
 
+// ==== CONTAR AGENDAMENTOS ATIVOS - ADMIN ====
+export const contarAgendamentosAtivosAdmin = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const total = await agendamentoService.contarAgendamentosAtivosAdmin();
+
+    res.status(200).json({ total });
+  } catch (error) {
+    console.error("Erro ao contar agendamentos ativos:", error);
+    res.status(500).json({
+      mensagem: "Erro ao contar agendamentos ativos.",
+    });
+  }
+};
+
 // ==== BUSCAR AGENDAMENTO POR ID ====
 export const buscarAgendamentoPorId = async (
   req: AuthRequest,

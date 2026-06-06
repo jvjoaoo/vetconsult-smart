@@ -1,7 +1,7 @@
 import { database } from "../config/database";
 
 // ==== LISTAR AGENDAMENTOS ====
-// Lista todos os agendamentos do tutor autenticado
+// Lista todos os agendamentos ativos do tutor autenticado
 export async function listarAgendamentos(tutorId: number) {
   const [rows] = await database.query(
     `
@@ -33,13 +33,27 @@ export async function listarAgendamentos(tutorId: number) {
     FROM agendamentos a
     INNER JOIN pets p ON a.PET_ID = p.PET_ID
     WHERE a.TUT_ID = ?
-    AND a.AGD_STATUS = 'AGENDADO'
+      AND a.AGD_STATUS = 'AGENDADO'
     ORDER BY a.AGD_DATA ASC, a.AGD_HORA ASC
     `,
     [tutorId]
   );
 
   return rows;
+}
+
+// ==== CONTAR AGENDAMENTOS ATIVOS - ADMIN ====
+// Conta todos os agendamentos ativos do sistema para o dashboard admin
+export async function contarAgendamentosAtivosAdmin() {
+  const [rows]: any = await database.query(
+    `
+    SELECT COUNT(*) AS total
+    FROM agendamentos
+    WHERE AGD_STATUS <> 'CANCELADO'
+    `
+  );
+
+  return Number(rows[0]?.total || 0);
 }
 
 // ==== BUSCAR AGENDAMENTO POR ID ====
@@ -251,8 +265,8 @@ export async function concluirAgendamento(
 }
 
 // ==== EXCLUIR AGENDAMENTO ====
-// Mantido apenas para uso administrativo futuro.
-// No fluxo normal do tutor, use cancelarAgendamento().
+// Mantido apenas para não quebrar o fluxo atual.
+// No fluxo normal do tutor, ele cancela o agendamento em vez de deletar.
 export async function excluirAgendamento(
   agendamentoId: number,
   tutorId: number

@@ -88,7 +88,9 @@ async function carregarIndicadores(tokenAdmin) {
       }
 
       if (!response.ok) {
-        console.error(`Erro ao buscar dados em ${url}. Status: ${response.status}`);
+        console.error(
+          `Erro ao buscar dados em ${url}. Status: ${response.status}`
+        );
         return 0;
       }
 
@@ -106,6 +108,14 @@ async function carregarIndicadores(tokenAdmin) {
         return Number(data.total) || 0;
       }
 
+      if (Array.isArray(data.data)) {
+        return data.data.length;
+      }
+
+      if (Array.isArray(data.agendamentos)) {
+        return data.agendamentos.length;
+      }
+
       return 0;
     } catch (error) {
       console.error(`Erro ao buscar total em ${url}:`, error);
@@ -113,17 +123,24 @@ async function carregarIndicadores(tokenAdmin) {
     }
   }
 
-  const [totalAdmins, totalTutores, totalPets] = await Promise.all([
-    buscarTotal("http://localhost:3000/usuarios_admin", true),
-    buscarTotal("http://localhost:3000/tutores"),
-    buscarTotal("http://localhost:3000/pets/total"),
-  ]);
+  async function buscarTotalAgendamentosAtivos() {
+    return buscarTotal(
+      "http://localhost:3000/agendamentos/admin/total-ativos"
+    );
+  }
 
-  const totalAgendamentos = 0;
+  const [totalAdmins, totalTutores, totalPets, totalAgendamentos] =
+    await Promise.all([
+      buscarTotal("http://localhost:3000/usuarios_admin", true),
+      buscarTotal("http://localhost:3000/tutores"),
+      buscarTotal("http://localhost:3000/pets/total"),
+      buscarTotalAgendamentosAtivos(),
+    ]);
 
   if (totalAdminsEl) totalAdminsEl.textContent = String(totalAdmins);
   if (totalTutoresEl) totalTutoresEl.textContent = String(totalTutores);
   if (totalPetsEl) totalPetsEl.textContent = String(totalPets);
+
   if (totalAgendamentosEl) {
     totalAgendamentosEl.textContent = String(totalAgendamentos);
   }
