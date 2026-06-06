@@ -111,7 +111,7 @@ function renderizarPetAtual() {
 
   if (btnSalvarConsulta) {
     btnSalvarConsulta.textContent =
-      etapaAtual === totalPets ? "Finalizar agendamentos" : "Próximo pet";
+      etapaAtual === totalPets ? "Finalizar cadastro" : "Próximo pet";
   }
 
   limparFormularioConsulta();
@@ -123,10 +123,16 @@ async function salvarConsultaAtual(event) {
 
   const dataConsulta = document.getElementById("AGD_DATA")?.value;
   const horaConsulta = document.getElementById("AGD_HORA")?.value;
-  const sintomas = document.getElementById("AGD_SINTOMAS")?.value;
-  const tempoSintomas = document.getElementById("AGD_TEMPO_SINTOMAS")?.value;
-  const medicamentos = document.getElementById("AGD_MEDICAMENTOS")?.value;
-  const observacoes = document.getElementById("AGD_OBSERVACOES")?.value;
+  const sintomas = document.getElementById("AGD_SINTOMAS")?.value.trim();
+  const tempoSintomas = document
+    .getElementById("AGD_TEMPO_SINTOMAS")
+    ?.value.trim();
+  const medicamentos = document
+    .getElementById("AGD_MEDICAMENTOS")
+    ?.value.trim();
+  const observacoes = document
+    .getElementById("AGD_OBSERVACOES")
+    ?.value.trim();
 
   if (!dataConsulta || !horaConsulta || !sintomas) {
     exibirMensagemConsulta(
@@ -149,12 +155,13 @@ async function salvarConsultaAtual(event) {
     AGD_HORA: horaConsulta,
     AGD_SINTOMAS: sintomas,
     AGD_VACINA: null,
-    AGD_EXAME: null,
     AGD_AGENDAMENTO_REFERENCIA_ID: null,
     AGD_OBSERVACOES: observacoesCompletas,
   };
 
   try {
+    bloquearBotaoSalvar(true);
+
     const resposta = await fetch(apiUrlAgendamentos, {
       method: "POST",
       headers: {
@@ -174,6 +181,8 @@ async function salvarConsultaAtual(event) {
   } catch (error) {
     console.error("Erro ao criar consulta:", error);
     exibirMensagemConsulta(error.message, "erro");
+  } finally {
+    bloquearBotaoSalvar(false);
   }
 }
 
@@ -186,10 +195,7 @@ function avancarParaProximoPet() {
     return;
   }
 
-  sessionStorage.setItem(
-    "fluxoAgendamento",
-    JSON.stringify(fluxoAgendamento)
-  );
+  sessionStorage.setItem("fluxoAgendamento", JSON.stringify(fluxoAgendamento));
 
   petAtual = fluxoAgendamento.pets[fluxoAgendamento.petAtualIndex];
   renderizarPetAtual();
@@ -283,6 +289,24 @@ function limparFormularioConsulta() {
 
   if (mensagemConsulta) {
     mensagemConsulta.textContent = "";
+  }
+}
+
+// ==== BLOQUEAR BOTÃO SALVAR ====
+function bloquearBotaoSalvar(bloquear) {
+  if (!btnSalvarConsulta) return;
+
+  btnSalvarConsulta.disabled = bloquear;
+
+  if (bloquear) {
+    btnSalvarConsulta.dataset.textoOriginal = btnSalvarConsulta.textContent;
+    btnSalvarConsulta.textContent = "Salvando...";
+    return;
+  }
+
+  if (btnSalvarConsulta.dataset.textoOriginal) {
+    btnSalvarConsulta.textContent = btnSalvarConsulta.dataset.textoOriginal;
+    delete btnSalvarConsulta.dataset.textoOriginal;
   }
 }
 

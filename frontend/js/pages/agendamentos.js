@@ -324,11 +324,6 @@ function controlarFluxoAgendamento(event) {
     return;
   }
 
-  if (tipoSelecionado === "Exame") {
-    iniciarFluxoExame();
-    return;
-  }
-
   criarAgendamento(event);
 }
 
@@ -348,22 +343,6 @@ function iniciarFluxoConsulta() {
   window.location.href = "./consulta-agendamento.html";
 }
 
-// ==== FLUXO EXAME ====
-function iniciarFluxoExame() {
-  const dadosFluxoAgendamento = {
-    tipo: "Exame",
-    pets: petsSelecionados,
-    petAtualIndex: 0,
-  };
-
-  sessionStorage.setItem(
-    "fluxoAgendamento",
-    JSON.stringify(dadosFluxoAgendamento)
-  );
-
-  window.location.href = "./exame-agendamento.html";
-}
-
 // ==== CRIAR AGENDAMENTO ====
 async function criarAgendamento(event) {
   event.preventDefault();
@@ -374,6 +353,7 @@ async function criarAgendamento(event) {
 
   const dataAgendamento = document.getElementById("AGD_DATA")?.value;
   const horaAgendamento = document.getElementById("AGD_HORA")?.value;
+  const sintomas = document.getElementById("AGD_SINTOMAS")?.value;
   const vacina = document.getElementById("AGD_VACINA")?.value;
   const referencia = document.getElementById(
     "AGD_AGENDAMENTO_REFERENCIA_ID"
@@ -385,6 +365,11 @@ async function criarAgendamento(event) {
       "Informe a data e o horário do agendamento.",
       "erro"
     );
+    return;
+  }
+
+  if (tipoSelecionado === "Consulta" && !sintomas) {
+    exibirMensagemAgendamento("Informe os sintomas do pet.", "erro");
     return;
   }
 
@@ -405,12 +390,12 @@ async function criarAgendamento(event) {
     for (const pet of petsSelecionados) {
       const dadosAgendamento = {
         PET_ID: Number(pet.PET_ID),
-        AGD_TIPO: tipoSelecionado,
+        AGD_TIPO: tipoSelecionado.toUpperCase(),
         AGD_DATA: dataAgendamento,
         AGD_HORA: horaAgendamento,
-        AGD_SINTOMAS: null,
-        AGD_VACINA: tipoSelecionado === "Vacina" ? vacina : null,
-        AGD_EXAME: null,
+        AGD_SINTOMAS:
+          tipoSelecionado === "Consulta" ? sintomas || null : null,
+        AGD_VACINA: tipoSelecionado === "Vacina" ? vacina || null : null,
         AGD_AGENDAMENTO_REFERENCIA_ID:
           tipoSelecionado === "Retorno" ? Number(referencia) : null,
         AGD_OBSERVACOES: observacoes || null,
@@ -553,10 +538,6 @@ function gerarDetalheTipoAgendamento(agendamento) {
 
   if (agendamento.AGD_TIPO === "Vacina" && agendamento.AGD_VACINA) {
     return `<p><strong>Vacina:</strong> ${agendamento.AGD_VACINA}</p>`;
-  }
-
-  if (agendamento.AGD_TIPO === "Exame" && agendamento.AGD_EXAME) {
-    return `<p><strong>Exame:</strong> ${agendamento.AGD_EXAME}</p>`;
   }
 
   if (
