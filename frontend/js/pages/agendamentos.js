@@ -30,6 +30,9 @@ let pets = [];
 let petsSelecionados = [];
 let agendamentos = [];
 
+let modoEdicaoAgendamento = false;
+let agendamentoEditandoId = null;
+
 document.addEventListener("DOMContentLoaded", () => {
   verificarSessaoTutorAgendamentos();
   configurarEventosAgendamentos();
@@ -45,8 +48,8 @@ function verificarSessaoTutorAgendamentos() {
 
 // ==== EVENTOS DA TELA ====
 function configurarEventosAgendamentos() {
-  btnNovoAgendamento?.addEventListener("click", abrirModalAgendamento);
-  btnNovoAgendamentoEmpty?.addEventListener("click", abrirModalAgendamento);
+  btnNovoAgendamento?.addEventListener("click", abrirModalNovoAgendamento);
+  btnNovoAgendamentoEmpty?.addEventListener("click", abrirModalNovoAgendamento);
   btnFecharModalAgendamento?.addEventListener("click", fecharModalAgendamento);
   btnCancelarModal?.addEventListener("click", fecharModalAgendamento);
 
@@ -194,6 +197,14 @@ function renderizarPetsChecklist() {
     const input = card.querySelector(".pet-checkbox");
 
     input.addEventListener("change", () => {
+      if (modoEdicaoAgendamento && input.checked) {
+        document.querySelectorAll(".pet-checkbox").forEach((checkbox) => {
+          if (checkbox !== input) {
+            checkbox.checked = false;
+          }
+        });
+      }
+
       atualizarPetsSelecionados();
       atualizarConsultasReferencia();
     });
@@ -231,20 +242,18 @@ function atualizarPetsSelecionados() {
 
 // ==== CAMPOS CONDICIONAIS ====
 function atualizarCamposCondicionais() {
-  const tipoSelecionado = document.querySelector(
-    "input[name='AGD_TIPO']:checked"
-  )?.value;
+  const tipoSelecionado = obterTipoSelecionado();
 
   campoVacina?.classList.add("hidden");
   campoRetorno?.classList.add("hidden");
 
   limparCamposCondicionaisNaoSelecionados(tipoSelecionado);
 
-  if (tipoSelecionado === "Vacina") {
+  if (tipoSelecionado === "VACINA") {
     campoVacina?.classList.remove("hidden");
   }
 
-  if (tipoSelecionado === "Retorno") {
+  if (tipoSelecionado === "RETORNO") {
     campoRetorno?.classList.remove("hidden");
     atualizarConsultasReferencia();
   }
@@ -255,13 +264,15 @@ function limparCamposCondicionaisNaoSelecionados(tipoSelecionado) {
   const vacina = document.getElementById("AGD_VACINA");
   const referencia = document.getElementById("AGD_AGENDAMENTO_REFERENCIA_ID");
 
-  if (tipoSelecionado !== "Vacina" && vacina) vacina.value = "";
-  if (tipoSelecionado !== "Retorno" && referencia) referencia.value = "";
+  if (tipoSelecionado !== "VACINA" && vacina) vacina.value = "";
+  if (tipoSelecionado !== "RETORNO" && referencia) referencia.value = "";
 }
 
 // ==== CONSULTAS PARA RETORNO ====
 function atualizarConsultasReferencia() {
   if (!selectAgendamentoReferencia) return;
+
+  const valorAtual = selectAgendamentoReferencia.value;
 
   selectAgendamentoReferencia.innerHTML = `
     <option value="">Selecione uma consulta</option>
@@ -271,12 +282,16 @@ function atualizarConsultasReferencia() {
 
   const idsPetsSelecionados = petsSelecionados.map((pet) => Number(pet.PET_ID));
 
-  const consultasDosPets = agendamentos.filter(
-    (agendamento) =>
+  const consultasDosPets = agendamentos.filter((agendamento) => {
+    const tipo = normalizarTipoAgendamento(agendamento.AGD_TIPO);
+
+    return (
       idsPetsSelecionados.includes(Number(agendamento.PET_ID)) &&
-      agendamento.AGD_TIPO === "Consulta" &&
-      agendamento.AGD_STATUS !== "CANCELADO"
-  );
+      tipo === "CONSULTA" &&
+      agendamento.AGD_STATUS !== "CANCELADO" &&
+      Number(agendamento.AGD_ID) !== Number(agendamentoEditandoId)
+    );
+  });
 
   if (!consultasDosPets.length) {
     const option = document.createElement("option");
@@ -296,15 +311,22 @@ function atualizarConsultasReferencia() {
 
     selectAgendamentoReferencia.appendChild(option);
   });
+
+  if (valorAtual) {
+    selectAgendamentoReferencia.value = valorAtual;
+  }
 }
 
 // ==== CONTROLE DO FLUXO ====
 function controlarFluxoAgendamento(event) {
   event.preventDefault();
 
-  const tipoSelecionado = document.querySelector(
-    "input[name='AGD_TIPO']:checked"
-  )?.value;
+  if (modoEdicaoAgendamento) {
+    atualizarAgendamento(event);
+    return;
+  }
+
+  const tipoSelecionado = obterTipoSelecionado();
 
   if (!tipoSelecionado) {
     exibirMensagemAgendamento("Selecione o tipo de agendamento.", "erro");
@@ -319,7 +341,7 @@ function controlarFluxoAgendamento(event) {
     return;
   }
 
-  if (tipoSelecionado === "Consulta") {
+  if (tipoSelecionado === "CONSULTA") {
     iniciarFluxoConsulta();
     return;
   }
@@ -347,9 +369,7 @@ function iniciarFluxoConsulta() {
 async function criarAgendamento(event) {
   event.preventDefault();
 
-  const tipoSelecionado = document.querySelector(
-    "input[name='AGD_TIPO']:checked"
-  )?.value;
+  const tipoSelecionado = obterTipoSelecionado();
 
   const dataAgendamento = document.getElementById("AGD_DATA")?.value;
   const horaAgendamento = document.getElementById("AGD_HORA")?.value;
@@ -368,17 +388,17 @@ async function criarAgendamento(event) {
     return;
   }
 
-  if (tipoSelecionado === "Consulta" && !sintomas) {
+  if (tipoSelecionado === "CONSULTA" && !sintomas) {
     exibirMensagemAgendamento("Informe os sintomas do pet.", "erro");
     return;
   }
 
-  if (tipoSelecionado === "Vacina" && !vacina) {
+  if (tipoSelecionado === "VACINA" && !vacina) {
     exibirMensagemAgendamento("Informe o tipo da vacina.", "erro");
     return;
   }
 
-  if (tipoSelecionado === "Retorno" && !referencia) {
+  if (tipoSelecionado === "RETORNO" && !referencia) {
     exibirMensagemAgendamento(
       "Selecione a consulta de referência para o retorno.",
       "erro"
@@ -390,14 +410,14 @@ async function criarAgendamento(event) {
     for (const pet of petsSelecionados) {
       const dadosAgendamento = {
         PET_ID: Number(pet.PET_ID),
-        AGD_TIPO: tipoSelecionado.toUpperCase(),
+        AGD_TIPO: tipoSelecionado,
         AGD_DATA: dataAgendamento,
         AGD_HORA: horaAgendamento,
-        AGD_SINTOMAS:
-          tipoSelecionado === "Consulta" ? sintomas || null : null,
-        AGD_VACINA: tipoSelecionado === "Vacina" ? vacina || null : null,
+        AGD_SINTOMAS: tipoSelecionado === "CONSULTA" ? sintomas || null : null,
+        AGD_VACINA: tipoSelecionado === "VACINA" ? vacina || null : null,
+        AGD_EXAME: null,
         AGD_AGENDAMENTO_REFERENCIA_ID:
-          tipoSelecionado === "Retorno" ? Number(referencia) : null,
+          tipoSelecionado === "RETORNO" ? Number(referencia) : null,
         AGD_OBSERVACOES: observacoes || null,
       };
 
@@ -430,6 +450,117 @@ async function criarAgendamento(event) {
   }
 }
 
+// ==== ATUALIZAR AGENDAMENTO ====
+async function atualizarAgendamento(event) {
+  event.preventDefault();
+
+  const tipoSelecionado = obterTipoSelecionado();
+
+  const dataAgendamento = document.getElementById("AGD_DATA")?.value;
+  const horaAgendamento = document.getElementById("AGD_HORA")?.value;
+  const sintomas = document.getElementById("AGD_SINTOMAS")?.value;
+  const vacina = document.getElementById("AGD_VACINA")?.value;
+  const referencia = document.getElementById(
+    "AGD_AGENDAMENTO_REFERENCIA_ID"
+  )?.value;
+  const observacoes = document.getElementById("AGD_OBSERVACOES")?.value;
+
+  if (!agendamentoEditandoId) {
+    exibirMensagemAgendamento("Agendamento inválido para edição.", "erro");
+    return;
+  }
+
+  if (!tipoSelecionado) {
+    exibirMensagemAgendamento("Selecione o tipo de agendamento.", "erro");
+    return;
+  }
+
+  if (!petsSelecionados.length) {
+    exibirMensagemAgendamento("Selecione um pet para continuar.", "erro");
+    return;
+  }
+
+  if (petsSelecionados.length > 1) {
+    exibirMensagemAgendamento(
+      "Na edição, selecione apenas um pet para o agendamento.",
+      "erro"
+    );
+    return;
+  }
+
+  if (!dataAgendamento || !horaAgendamento) {
+    exibirMensagemAgendamento(
+      "Informe a data e o horário do agendamento.",
+      "erro"
+    );
+    return;
+  }
+
+  if (tipoSelecionado === "CONSULTA" && !sintomas) {
+    exibirMensagemAgendamento("Informe os sintomas do pet.", "erro");
+    return;
+  }
+
+  if (tipoSelecionado === "VACINA" && !vacina) {
+    exibirMensagemAgendamento("Informe o tipo da vacina.", "erro");
+    return;
+  }
+
+  if (tipoSelecionado === "RETORNO" && !referencia) {
+    exibirMensagemAgendamento(
+      "Selecione a consulta de referência para o retorno.",
+      "erro"
+    );
+    return;
+  }
+
+  const petSelecionado = petsSelecionados[0];
+
+  const dadosAgendamento = {
+    PET_ID: Number(petSelecionado.PET_ID),
+    AGD_TIPO: tipoSelecionado,
+    AGD_DATA: dataAgendamento,
+    AGD_HORA: horaAgendamento,
+    AGD_SINTOMAS: tipoSelecionado === "CONSULTA" ? sintomas || null : null,
+    AGD_VACINA: tipoSelecionado === "VACINA" ? vacina || null : null,
+    AGD_EXAME: null,
+    AGD_AGENDAMENTO_REFERENCIA_ID:
+      tipoSelecionado === "RETORNO" ? Number(referencia) : null,
+    AGD_OBSERVACOES: observacoes || null,
+  };
+
+  try {
+    const resposta = await fetch(
+      `${apiUrlAgendamentos}/${agendamentoEditandoId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${tokenTutor}`,
+        },
+        body: JSON.stringify(dadosAgendamento),
+      }
+    );
+
+    const resultado = await resposta.json();
+
+    if (!resposta.ok) {
+      throw new Error(resultado.mensagem || "Erro ao atualizar agendamento.");
+    }
+
+    exibirMensagemAgendamento("Agendamento atualizado com sucesso.", "sucesso");
+
+    await carregarAgendamentos();
+
+    setTimeout(() => {
+      fecharModalAgendamento();
+    }, 800);
+  } catch (error) {
+    console.error("Erro ao atualizar agendamento:", error);
+    exibirMensagemAgendamento(error.message, "erro");
+  }
+}
+
 // ==== RENDERIZAR AGENDAMENTOS ====
 function renderizarAgendamentos() {
   if (!agendamentosLista || !agendamentosEmptyState) return;
@@ -450,18 +581,29 @@ function renderizarAgendamentos() {
     card.className = "agendamento-dashboard-card";
 
     card.innerHTML = `
-      <button
-        class="agendamento-delete"
-        type="button"
-        onclick="cancelarAgendamento(${agendamento.AGD_ID})"
-        title="Cancelar agendamento"
-      >
-        <img 
-          src="../assets/excluir.svg" 
-          alt="Cancelar agendamento" 
-          class="agendamento-delete-icon"
-        />
-      </button>
+      <div class="agendamento-card-actions">
+        <button
+          class="agendamento-edit"
+          type="button"
+          onclick="abrirModalEdicaoAgendamento(${agendamento.AGD_ID})"
+          title="Editar agendamento"
+        >
+          Editar
+        </button>
+
+        <button
+          class="agendamento-delete"
+          type="button"
+          onclick="cancelarAgendamento(${agendamento.AGD_ID})"
+          title="Cancelar agendamento"
+        >
+          <img 
+            src="../assets/excluir.svg" 
+            alt="Cancelar agendamento" 
+            class="agendamento-delete-icon"
+          />
+        </button>
+      </div>
 
       <div class="agendamento-pet-icon">
         ${obterIconePetAgendamento(agendamento.PET_ESPECIE)}
@@ -469,7 +611,7 @@ function renderizarAgendamentos() {
 
       <h3>${agendamento.PET_NOME || "-"}</h3>
 
-      <p>${agendamento.AGD_TIPO || "-"}</p>
+      <p>${formatarTipoAgendamento(agendamento.AGD_TIPO)}</p>
       <p>${agendamento.AGD_STATUS || "AGENDADO"}</p>
 
       <p><strong>Data:</strong> ${formatarData(agendamento.AGD_DATA)}</p>
@@ -483,7 +625,6 @@ function renderizarAgendamentos() {
 }
 
 // ==== ÍCONE DO PET NO CARD ====
-// Ajuste os nomes dos arquivos abaixo conforme os SVGs que você salvou em /assets
 function obterIconePetAgendamento(especie) {
   const especieFormatada = String(especie || "").toLowerCase();
 
@@ -532,18 +673,17 @@ function obterIconePetAgendamento(especie) {
 
 // ==== DETALHE DO TIPO DE AGENDAMENTO ====
 function gerarDetalheTipoAgendamento(agendamento) {
-  if (agendamento.AGD_TIPO === "Consulta" && agendamento.AGD_SINTOMAS) {
+  const tipo = normalizarTipoAgendamento(agendamento.AGD_TIPO);
+
+  if (tipo === "CONSULTA" && agendamento.AGD_SINTOMAS) {
     return `<p><strong>Sintomas:</strong> ${agendamento.AGD_SINTOMAS}</p>`;
   }
 
-  if (agendamento.AGD_TIPO === "Vacina" && agendamento.AGD_VACINA) {
+  if (tipo === "VACINA" && agendamento.AGD_VACINA) {
     return `<p><strong>Vacina:</strong> ${agendamento.AGD_VACINA}</p>`;
   }
 
-  if (
-    agendamento.AGD_TIPO === "Retorno" &&
-    agendamento.AGD_AGENDAMENTO_REFERENCIA_ID
-  ) {
+  if (tipo === "RETORNO" && agendamento.AGD_AGENDAMENTO_REFERENCIA_ID) {
     return `
       <p>
         <strong>Consulta referência:</strong>
@@ -553,6 +693,33 @@ function gerarDetalheTipoAgendamento(agendamento) {
   }
 
   return "";
+}
+
+// ==== ABRIR MODAL NOVO AGENDAMENTO ====
+async function abrirModalNovoAgendamento() {
+  modoEdicaoAgendamento = false;
+  agendamentoEditandoId = null;
+
+  limparFormularioAgendamento();
+  await abrirModalAgendamento();
+}
+
+// ==== ABRIR MODAL EDIÇÃO ====
+async function abrirModalEdicaoAgendamento(agendamentoId) {
+  const agendamento = agendamentos.find(
+    (item) => Number(item.AGD_ID) === Number(agendamentoId)
+  );
+
+  if (!agendamento) {
+    alert("Agendamento não encontrado para edição.");
+    return;
+  }
+
+  modoEdicaoAgendamento = true;
+  agendamentoEditandoId = agendamento.AGD_ID;
+
+  await abrirModalAgendamento();
+  preencherFormularioEdicaoAgendamento(agendamento);
 }
 
 // ==== ABRIR MODAL ====
@@ -570,6 +737,64 @@ async function abrirModalAgendamento() {
   atualizarCamposCondicionais();
 }
 
+// ==== PREENCHER MODAL DE EDIÇÃO ====
+function preencherFormularioEdicaoAgendamento(agendamento) {
+  const campoData = document.getElementById("AGD_DATA");
+  const campoHora = document.getElementById("AGD_HORA");
+  const campoSintomas = document.getElementById("AGD_SINTOMAS");
+  const campoVacinaInput = document.getElementById("AGD_VACINA");
+  const campoObservacoes = document.getElementById("AGD_OBSERVACOES");
+
+  const tipo = normalizarTipoAgendamento(agendamento.AGD_TIPO);
+
+  marcarRadioTipoAgendamento(tipo);
+
+  if (campoData) {
+    campoData.value = formatarDataInput(agendamento.AGD_DATA);
+  }
+
+  if (campoHora) {
+    campoHora.value = formatarHora(agendamento.AGD_HORA);
+  }
+
+  if (campoSintomas) {
+    campoSintomas.value = agendamento.AGD_SINTOMAS || "";
+  }
+
+  if (campoVacinaInput) {
+    campoVacinaInput.value = agendamento.AGD_VACINA || "";
+  }
+
+  if (campoObservacoes) {
+    campoObservacoes.value = agendamento.AGD_OBSERVACOES || "";
+  }
+
+  selecionarPetNoModal(agendamento.PET_ID);
+
+  atualizarCamposCondicionais();
+
+  if (selectAgendamentoReferencia) {
+    selectAgendamentoReferencia.value =
+      agendamento.AGD_AGENDAMENTO_REFERENCIA_ID || "";
+  }
+}
+
+// ==== SELECIONAR PET NO MODAL ====
+function selecionarPetNoModal(petId) {
+  document.querySelectorAll(".pet-checkbox").forEach((checkbox) => {
+    checkbox.checked = Number(checkbox.value) === Number(petId);
+  });
+
+  atualizarPetsSelecionados();
+}
+
+// ==== MARCAR TIPO DO AGENDAMENTO ====
+function marcarRadioTipoAgendamento(tipo) {
+  document.querySelectorAll("input[name='AGD_TIPO']").forEach((radio) => {
+    radio.checked = normalizarTipoAgendamento(radio.value) === tipo;
+  });
+}
+
 // ==== FECHAR MODAL ====
 function fecharModalAgendamento() {
   if (!modalAgendamento || !formAgendamento) return;
@@ -577,7 +802,15 @@ function fecharModalAgendamento() {
   modalAgendamento.classList.add("hidden");
   document.body.classList.remove("modal-open");
 
-  formAgendamento.reset();
+  modoEdicaoAgendamento = false;
+  agendamentoEditandoId = null;
+
+  limparFormularioAgendamento();
+}
+
+// ==== LIMPAR FORMULÁRIO ====
+function limparFormularioAgendamento() {
+  formAgendamento?.reset();
 
   petsSelecionados = [];
 
@@ -641,6 +874,36 @@ function exibirMensagemAgendamento(mensagem, tipo) {
   mensagemAgendamento.style.color = tipo === "sucesso" ? "#0b8f6a" : "#d93025";
 }
 
+// ==== OBTER TIPO SELECIONADO ====
+function obterTipoSelecionado() {
+  const tipoSelecionado = document.querySelector(
+    "input[name='AGD_TIPO']:checked"
+  )?.value;
+
+  return normalizarTipoAgendamento(tipoSelecionado);
+}
+
+// ==== NORMALIZAR TIPO ====
+function normalizarTipoAgendamento(tipo) {
+  return String(tipo || "")
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toUpperCase();
+}
+
+// ==== FORMATAR TIPO ====
+function formatarTipoAgendamento(tipo) {
+  const tipoNormalizado = normalizarTipoAgendamento(tipo);
+
+  if (tipoNormalizado === "CONSULTA") return "Consulta";
+  if (tipoNormalizado === "VACINA") return "Vacina";
+  if (tipoNormalizado === "RETORNO") return "Retorno";
+  if (tipoNormalizado === "EXAME") return "Exame";
+
+  return tipo || "-";
+}
+
 // ==== FORMATAR DATA ====
 function formatarData(data) {
   if (!data) return "-";
@@ -654,6 +917,27 @@ function formatarData(data) {
   return dataObj.toLocaleDateString("pt-BR", {
     timeZone: "UTC",
   });
+}
+
+// ==== FORMATAR DATA PARA INPUT ====
+function formatarDataInput(data) {
+  if (!data) return "";
+
+  if (typeof data === "string" && data.includes("T")) {
+    return data.split("T")[0];
+  }
+
+  if (typeof data === "string" && /^\d{4}-\d{2}-\d{2}$/.test(data)) {
+    return data;
+  }
+
+  const dataObj = new Date(data);
+
+  if (Number.isNaN(dataObj.getTime())) {
+    return "";
+  }
+
+  return dataObj.toISOString().split("T")[0];
 }
 
 // ==== FORMATAR HORA ====

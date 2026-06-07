@@ -4,6 +4,8 @@ import {
   buscarAgendamentoPorId,
   criarAgendamento,
   atualizarAgendamento,
+  cancelarAgendamento,
+  concluirAgendamento,
   excluirAgendamento,
   contarAgendamentosAtivosAdmin,
 } from "../controllers/agendamentoController";
@@ -34,10 +36,25 @@ router.get("/agendamentos/:id", verificarTokenTutor, buscarAgendamentoPorId);
 // Cria um novo agendamento para um pet do tutor logado
 router.post("/agendamentos", verificarTokenTutor, criarAgendamento);
 
-// Atualiza um agendamento existente do tutor logado
+// Atualiza um agendamento marcado do tutor logado
 router.put("/agendamentos/:id", verificarTokenTutor, atualizarAgendamento);
 
-// Exclui um agendamento existente do tutor logado
+// Cancela um agendamento do tutor logado sem excluir o histórico
+router.patch(
+  "/agendamentos/:id/cancelar",
+  verificarTokenTutor,
+  cancelarAgendamento
+);
+
+// Marca um agendamento como concluído
+router.patch(
+  "/agendamentos/:id/concluir",
+  verificarTokenTutor,
+  concluirAgendamento
+);
+
+// Mantido para compatibilidade com o fluxo atual
+// No service, essa rota também cancela o agendamento em vez de deletar
 router.delete("/agendamentos/:id", verificarTokenTutor, excluirAgendamento);
 
 export default router;

@@ -55,6 +55,11 @@ export const buscarAgendamentoPorId = async (
       return;
     }
 
+    if (!agendamentoId || Number.isNaN(agendamentoId)) {
+      res.status(400).json({ mensagem: "ID do agendamento inválido." });
+      return;
+    }
+
     const agendamento = await agendamentoService.buscarAgendamentoPorId(
       agendamentoId,
       tutorId
@@ -79,15 +84,42 @@ export const criarAgendamento = async (
 ): Promise<void> => {
   try {
     const tutorId = req.tutor?.id;
+    const {
+      PET_ID,
+      AGD_DATA,
+      AGD_HORA,
+      AGD_TIPO,
+      AGD_SINTOMAS,
+      AGD_VACINA,
+      AGD_EXAME,
+      AGD_AGENDAMENTO_REFERENCIA_ID,
+      AGD_OBSERVACOES,
+    } = req.body;
 
     if (!tutorId) {
       res.status(401).json({ mensagem: "Tutor não autenticado." });
       return;
     }
 
+    if (!PET_ID || !AGD_DATA || !AGD_HORA || !AGD_TIPO) {
+      res.status(400).json({
+        mensagem:
+          "Preencha os campos obrigatórios: pet, data, hora e tipo do agendamento.",
+      });
+      return;
+    }
+
     const novoAgendamento = await agendamentoService.criarAgendamento({
-      ...req.body,
       TUT_ID: tutorId,
+      PET_ID,
+      AGD_DATA,
+      AGD_HORA,
+      AGD_TIPO,
+      AGD_SINTOMAS,
+      AGD_VACINA,
+      AGD_EXAME,
+      AGD_AGENDAMENTO_REFERENCIA_ID,
+      AGD_OBSERVACOES,
     });
 
     res.status(201).json({
@@ -101,6 +133,7 @@ export const criarAgendamento = async (
 };
 
 // ==== ATUALIZAR AGENDAMENTO ====
+// Atualiza apenas agendamentos marcados com status AGENDADO
 export const atualizarAgendamento = async (
   req: AuthRequest,
   res: Response
@@ -109,21 +142,56 @@ export const atualizarAgendamento = async (
     const tutorId = req.tutor?.id;
     const agendamentoId = Number(req.params.id);
 
+    const {
+      PET_ID,
+      AGD_DATA,
+      AGD_HORA,
+      AGD_TIPO,
+      AGD_SINTOMAS,
+      AGD_VACINA,
+      AGD_EXAME,
+      AGD_AGENDAMENTO_REFERENCIA_ID,
+      AGD_OBSERVACOES,
+    } = req.body;
+
     if (!tutorId) {
       res.status(401).json({ mensagem: "Tutor não autenticado." });
+      return;
+    }
+
+    if (!agendamentoId || Number.isNaN(agendamentoId)) {
+      res.status(400).json({ mensagem: "ID do agendamento inválido." });
+      return;
+    }
+
+    if (!PET_ID || !AGD_DATA || !AGD_HORA || !AGD_TIPO) {
+      res.status(400).json({
+        mensagem:
+          "Preencha os campos obrigatórios: pet, data, hora e tipo do agendamento.",
+      });
       return;
     }
 
     const atualizado = await agendamentoService.atualizarAgendamento(
       agendamentoId,
       tutorId,
-      req.body
+      {
+        PET_ID,
+        AGD_DATA,
+        AGD_HORA,
+        AGD_TIPO,
+        AGD_SINTOMAS,
+        AGD_VACINA,
+        AGD_EXAME,
+        AGD_AGENDAMENTO_REFERENCIA_ID,
+        AGD_OBSERVACOES,
+      }
     );
 
     if (!atualizado) {
       res.status(404).json({
         mensagem:
-          "Agendamento não encontrado ou não pode ser atualizado.",
+          "Agendamento não encontrado, cancelado ou concluído. Apenas agendamentos marcados podem ser editados.",
       });
       return;
     }
@@ -153,6 +221,11 @@ export const cancelarAgendamento = async (
       return;
     }
 
+    if (!agendamentoId || Number.isNaN(agendamentoId)) {
+      res.status(400).json({ mensagem: "ID do agendamento inválido." });
+      return;
+    }
+
     const cancelado = await agendamentoService.cancelarAgendamento(
       agendamentoId,
       tutorId,
@@ -161,8 +234,7 @@ export const cancelarAgendamento = async (
 
     if (!cancelado) {
       res.status(404).json({
-        mensagem:
-          "Agendamento não encontrado ou já está cancelado.",
+        mensagem: "Agendamento não encontrado ou já está cancelado.",
       });
       return;
     }
@@ -190,6 +262,11 @@ export const concluirAgendamento = async (
       return;
     }
 
+    if (!agendamentoId || Number.isNaN(agendamentoId)) {
+      res.status(400).json({ mensagem: "ID do agendamento inválido." });
+      return;
+    }
+
     const concluido = await agendamentoService.concluirAgendamento(
       agendamentoId,
       tutorId
@@ -197,8 +274,7 @@ export const concluirAgendamento = async (
 
     if (!concluido) {
       res.status(404).json({
-        mensagem:
-          "Agendamento não encontrado ou não pode ser concluído.",
+        mensagem: "Agendamento não encontrado ou não pode ser concluído.",
       });
       return;
     }
@@ -228,6 +304,11 @@ export const excluirAgendamento = async (
       return;
     }
 
+    if (!agendamentoId || Number.isNaN(agendamentoId)) {
+      res.status(400).json({ mensagem: "ID do agendamento inválido." });
+      return;
+    }
+
     const cancelado = await agendamentoService.excluirAgendamento(
       agendamentoId,
       tutorId
@@ -235,8 +316,7 @@ export const excluirAgendamento = async (
 
     if (!cancelado) {
       res.status(404).json({
-        mensagem:
-          "Agendamento não encontrado ou já está cancelado.",
+        mensagem: "Agendamento não encontrado ou já está cancelado.",
       });
       return;
     }

@@ -196,10 +196,11 @@ export async function atualizarAgendamento(
       AGD_VACINA = ?,
       AGD_EXAME = ?,
       AGD_AGENDAMENTO_REFERENCIA_ID = ?,
-      AGD_OBSERVACOES = ?
+      AGD_OBSERVACOES = ?,
+      AGD_UPDATED_AT = NOW()
     WHERE AGD_ID = ?
       AND TUT_ID = ?
-      AND AGD_STATUS <> 'CANCELADO'
+      AND AGD_STATUS = 'AGENDADO'
     `,
     [
       PET_ID,
@@ -232,7 +233,8 @@ export async function cancelarAgendamento(
     SET 
       AGD_STATUS = 'CANCELADO',
       AGD_CANCELADO_EM = NOW(),
-      AGD_MOTIVO_CANCELAMENTO = ?
+      AGD_MOTIVO_CANCELAMENTO = ?,
+      AGD_UPDATED_AT = NOW()
     WHERE AGD_ID = ?
       AND TUT_ID = ?
       AND AGD_STATUS <> 'CANCELADO'
@@ -253,7 +255,8 @@ export async function concluirAgendamento(
     `
     UPDATE agendamentos
     SET 
-      AGD_STATUS = 'CONCLUIDO'
+      AGD_STATUS = 'CONCLUIDO',
+      AGD_UPDATED_AT = NOW()
     WHERE AGD_ID = ?
       AND TUT_ID = ?
       AND AGD_STATUS = 'AGENDADO'
@@ -277,7 +280,8 @@ export async function excluirAgendamento(
     SET 
       AGD_STATUS = 'CANCELADO',
       AGD_CANCELADO_EM = NOW(),
-      AGD_MOTIVO_CANCELAMENTO = 'Cancelado pelo tutor'
+      AGD_MOTIVO_CANCELAMENTO = 'Cancelado pelo tutor',
+      AGD_UPDATED_AT = NOW()
     WHERE AGD_ID = ?
       AND TUT_ID = ?
       AND AGD_STATUS <> 'CANCELADO'
