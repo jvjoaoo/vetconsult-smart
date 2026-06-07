@@ -1,7 +1,7 @@
-# 🐾 VetConsult Smart — Admin Dashboard
+# 🐾 VetConsult Smart
 
 <p align="center">
-  Sistema administrativo Full-Stack para gerenciamento de usuários, desenvolvido com foco em arquitetura escalável, boas práticas e interface moderna.
+  Sistema Full-Stack para gerenciamento de tutores, pets e agendamentos veterinários.
 </p>
 
 <p align="center">
@@ -10,215 +10,298 @@
 ![Node](https://img.shields.io/badge/Node.js-18+-green)
 ![Express](https://img.shields.io/badge/Express.js-backend-lightgrey)
 ![MySQL](https://img.shields.io/badge/MySQL-database-blue)
-![TypeScript](https://img.shields.io/badge/TypeScript-frontend-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-backend-blue)
 ![License](https://img.shields.io/badge/license-Educacional-lightgrey)
 
 </p>
 
 ---
 
-## 📌 Sobre o Projeto
+# 📌 Sobre o Projeto
 
-O **VetConsult Smart** é um painel administrativo web desenvolvido para gerenciar usuários de um sistema veterinário.  
-O projeto simula a base de administração de uma aplicação real, com arquitetura separada entre front-end e back-end.
+O **VetConsult Smart** é um sistema web desenvolvido para auxiliar no gerenciamento de clínicas veterinárias, oferecendo funcionalidades para administração de usuários, cadastro de tutores, gerenciamento de pets e controle de agendamentos.
 
-Este projeto foi construído com foco em:
+O projeto está sendo desenvolvido como atividade acadêmica do curso de **Análise e Desenvolvimento de Sistemas da Faculdade Impacta**, aplicando conceitos de:
 
-- Organização de código profissional
-- Arquitetura CRUD completa
-- Interface responsiva
-- Componentização manual
-- Preparação para expansão futura
-
----
-
-## 🚀 Funcionalidades
-
-- ✅ Cadastro de usuários  
-- ✅ Listagem dinâmica  
-- ✅ Edição de registros  
-- ✅ Exclusão de usuários  
-- ✅ Interface responsiva  
-- ✅ Máscaras de input (data e telefone)  
-- ✅ Menu hamburguer para mobile  
-- ✅ Organização por componentes  
-- 🔒 Base preparada para autenticação futura  
+- Engenharia de Software
+- Arquitetura Cliente-Servidor
+- APIs REST
+- Banco de Dados Relacional
+- Segurança com JWT
+- Desenvolvimento Full-Stack
 
 ---
 
-## 🧩 Tecnologias Utilizadas
+# 🚀 Funcionalidades Implementadas
 
-### 🖥️ Front-end
+## 👨‍💼 Administração
+
+- ✅ Login de administradores
+- ✅ Autenticação via JWT
+- ✅ Cadastro de administradores
+- ✅ Visualização de administradores
+- ✅ Edição de administradores
+- ✅ Exclusão de administradores
+- ✅ Controle de Administrador Master
+- ✅ Dashboard administrativo com indicadores
+
+---
+
+## 👤 Tutores
+
+- ✅ Cadastro de tutores
+- ✅ Login de tutores
+- ✅ Reativação automática de contas inativas
+- ✅ Edição de perfil
+- ✅ Inativação de conta
+- ✅ Exclusão definitiva de conta
+- ✅ Dashboard do tutor
+
+---
+
+## 🐾 Pets
+
+- ✅ Cadastro de pets
+- ✅ Listagem de pets
+- ✅ Visualização de pets
+- ✅ Edição de pets
+- ✅ Exclusão de pets
+- ✅ Associação automática ao tutor logado
+- ✅ Exibição de pets no dashboard
+
+---
+
+## 📅 Agendamentos
+
+- ✅ Cadastro de agendamentos
+- ✅ Listagem de agendamentos
+- ✅ Edição de agendamentos
+- ✅ Cancelamento de agendamentos
+- ✅ Atualização dinâmica dos dashboards
+- ✅ Controle de disponibilidade dos pets para agendamento
+
+---
+
+# 🧩 Tecnologias Utilizadas
+
+## 🖥️ Front-end
+
 - HTML5
-- CSS3 (arquitetura por componentes)
-- TypeScript / JavaScript
-- Layout responsivo
-- Design System próprio
+- CSS3
+- JavaScript (ES6+)
+- Design Responsivo
 - Fonte Poppins
 
-### ⚙️ Back-end
+---
+
+## ⚙️ Back-end
+
 - Node.js
+- TypeScript
 - Express
-- API REST
-
-### 🗄️ Banco de Dados
-- MySQL
-
-### 🧰 Ferramentas
-- Git
-- GitHub
-- NPM
+- JWT (JSON Web Token)
+- Bcrypt
 
 ---
 
-## 📂 Arquitetura do Projeto
+## 🗄️ Banco de Dados
+
+- MySQL
+
+---
+
+## 🧰 Ferramentas
+
+- Git
+- GitHub
+- MySQL Workbench
+- NPM
+- VS Code
+
+---
+
+# 📂 Estrutura do Projeto
 
 ```text
 vetconsult-smart/
 │
 ├── backend/
 │   ├── src/
+│   │   ├── config/
 │   │   ├── controllers/
+│   │   ├── middlewares/
 │   │   ├── routes/
-│   │   ├── models/
+│   │   ├── services/
+│   │   ├── utils/
+│   │   ├── app.ts
 │   │   └── server.ts
 │
 ├── frontend/
-│   ├── pages/
-│   ├── js/
-│   │   ├── components/
-│   │   └── pages/
+│   ├── assets/
 │   ├── css/
-│   │   ├── components/
-│   │   └── style.css
+│   ├── js/
+│   │   └── pages/
+│   └── pages/
 │
 └── README.md
 ```
 
 ---
 
-## ⚙️ Como Executar Localmente
+# ⚙️ Como Executar Localmente
 
-### 1️⃣ Clonar o repositório
+## 1️⃣ Clonar o repositório
 
 ```bash
 git clone https://github.com/seu-usuario/vetconsult-smart.git
+
 cd vetconsult-smart
 ```
 
 ---
 
-### 2️⃣ Configurar o Backend
+## 2️⃣ Configurar o Banco de Dados
+
+Criar um banco chamado:
+
+```sql
+CREATE DATABASE vetconsult_smart_db;
+```
+
+Importar o script SQL do projeto contendo as tabelas:
+
+- usuarios_admin
+- tutores
+- pets
+- agendamentos
+
+---
+
+## 3️⃣ Configurar Variáveis de Ambiente
+
+Criar um arquivo `.env` dentro da pasta backend:
+
+```env
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=sua_senha
+DB_NAME=vetconsult_smart_db
+
+JWT_SECRET=sua_chave_secreta
+```
+
+---
+
+## 4️⃣ Executar o Backend
 
 ```bash
 cd backend
+
 npm install
+
 npm run dev
 ```
 
-Servidor padrão:
+Servidor:
 
-```
+```text
 http://localhost:3000
 ```
 
 ---
 
-### 3️⃣ Configurar o Banco de Dados
+## 5️⃣ Executar o Front-end
 
-Exemplo de tabela principal:
+Abra os arquivos utilizando o Live Server do VS Code.
 
-```sql
-CREATE TABLE usuarios_admin (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  nome VARCHAR(150) NOT NULL,
-  email VARCHAR(150) NOT NULL UNIQUE,
-  telefone VARCHAR(20),
-  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+Exemplos:
+
+```text
+frontend/pages/login-admin.html
+```
+
+ou
+
+```text
+frontend/pages/login-tutor.html
 ```
 
 ---
 
-### 4️⃣ Abrir o Front-end
+# 🎨 Identidade Visual
 
-Abra no navegador:
+Paleta principal utilizada no projeto:
 
-```
-frontend/pages/admin-usuarios.html
-```
+| Cor | Hex |
+|------|------|
+| Verde Escuro | #0B1D18 |
+| Verde Primário | #14D09B |
+| Verde Destaque | #00FFB7 |
+| Fundo Claro | #EFF9F6 |
+| Branco | #FFFFFF |
 
----
-
-## 🎨 Identidade Visual
-
-O design foi desenvolvido para transmitir tecnologia, cuidado e confiabilidade na área veterinária.
-
-**Paleta principal:**
-
-- Verde escuro — base institucional  
-- Verde vibrante — ações e destaques  
-- Branco — limpeza e legibilidade  
-- Tons suaves — apoio visual  
-
-**Tipografia:** Poppins  
+**Tipografia:** Poppins
 
 ---
 
-## 📱 Responsividade
+# 📱 Responsividade
 
-O sistema é totalmente adaptável para:
+O sistema foi desenvolvido para funcionamento em:
 
-- 💻 Desktop  
-- 📱 Smartphones  
-- 📟 Tablets  
+- 💻 Desktop
+- 📱 Smartphones
+- 📟 Tablets
 
-Inclui:
-
-- Ajustes de layout automático
-- Otimização para telas pequenas
+Possuindo adaptação automática de layout para diferentes resoluções.
 
 ---
 
-## 🎯 Objetivo do Projeto
+# 🎯 Objetivos do Projeto
 
-Este projeto foi desenvolvido para demonstrar habilidades práticas em desenvolvimento Full-Stack:
+O VetConsult Smart tem como objetivo aplicar conhecimentos de desenvolvimento Full-Stack através da construção de um sistema de gerenciamento veterinário.
 
-- Arquitetura cliente-servidor
-- Construção de APIs REST
-- Manipulação de banco relacional
-- Design responsivo
-- Organização escalável de código
-- Versionamento profissional com Git
+Principais conceitos aplicados:
+
+- APIs REST
+- Arquitetura em camadas
+- CRUD completo
+- Segurança com JWT
+- Hash de senhas com Bcrypt
+- Relacionamentos em banco de dados
+- Integração Front-End e Back-End
+- Boas práticas de organização de código
 
 ---
 
-## 🔮 Próximas Implementações
+# 🔮 Próximas Implementações
 
-- 🔐 Sistema de autenticação (login)
-- 👤 Perfis e níveis de acesso
-- 📊 Novos módulos administrativos
+- 📄 Prontuário veterinário
+- 🧪 Gestão de exames
+- 📷 Foto de perfil do tutor
+- 🐶 Foto dos pets
 - ☁️ Deploy em produção
-- 🛡️ Melhorias de segurança
+- 📊 Relatórios e métricas
 
 ---
 
-## 👨‍💻 Autor
+# 👨‍💻 Autor
 
 **João Vitor Laurindo**
 
-Desenvolvedor em formação focado em desenvolvimento Full-Stack.
+Desenvolvedor Full-Stack em formação, apaixonado por tecnologia, desenvolvimento web e arquitetura de software.
 
-[LinkedIn](https://www.linkedin.com/in/joao-lau/) • [Portfólio](#)
-
----
-
-## 📄 Licença
-
-Este projeto é destinado a fins educacionais e demonstração técnica.
+🔗 LinkedIn:
+https://www.linkedin.com/in/joao-lau/
 
 ---
 
-## ⭐ Contribuições
+# 📄 Licença
 
-Contribuições são bem-vindas para melhorias ou sugestões.
+Projeto desenvolvido exclusivamente para fins acadêmicos e educacionais.
+
+---
+
+# ⭐ Status do Projeto
+
+🚧 Em desenvolvimento — funcionalidades de administração, tutores, pets e agendamentos concluídas. Próximas etapas incluem prontuários veterinários, exames e melhorias de experiência do usuário.
